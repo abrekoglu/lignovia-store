@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Layout from "@/components/Layout";
+import Image from "next/image";
 
 export default function Register() {
   const { data: session, status } = useSession();
@@ -13,6 +13,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    agreeToTerms: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,11 +29,9 @@ export default function Register() {
   // Show loading while checking session
   if (status === "loading") {
     return (
-      <Layout>
-        <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8 text-center">
-          <p>Loading...</p>
-        </div>
-      </Layout>
+      <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex items-center justify-center">
+        <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading...</p>
+      </div>
     );
   }
 
@@ -42,10 +41,10 @@ export default function Register() {
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -65,6 +64,13 @@ export default function Register() {
     // Validate password length
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long");
+      setLoading(false);
+      return;
+    }
+
+    // Validate terms agreement
+    if (!formData.agreeToTerms) {
+      setError("Please agree to the Terms of Service");
       setLoading(false);
       return;
     }
@@ -101,109 +107,173 @@ export default function Register() {
   };
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex items-center justify-center px-4 py-12">
       <Head>
-        <title>Register - Lignovia Store</title>
-        <meta name="description" content="Create a new account" />
+        <title>Register - LIGNOVIA</title>
+        <meta name="description" content="Create a new LIGNOVIA account" />
       </Head>
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold mb-6 text-center">Create Account</h1>
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
-            </div>
-          )}
+      {/* Form Card */}
+      <div className="w-full max-w-[460px] card p-8 lg:p-10 animate-fade-in">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <Image
+            src="/images/logo/logo.png"
+            alt="LIGNOVIA"
+            width={200}
+            height={48}
+            className="h-12 w-auto"
+            priority
+          />
+        </div>
 
-          {success && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-              {success}
-            </div>
-          )}
+        {/* Tagline */}
+        <p className="text-center text-sm text-text-secondary-light dark:text-text-secondary-dark mb-8">
+          Join the LIGNOVIA family of creators.
+        </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name *
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-error-light/10 dark:bg-error-dark/10 border border-error-light dark:border-error-dark rounded-soft">
+            <p className="text-sm text-error-light dark:text-error-dark">{error}</p>
+          </div>
+        )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email *
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+        {/* Success Message */}
+        {success && (
+          <div className="mb-6 p-4 bg-success-light/10 dark:bg-success-dark/10 border border-success-light dark:border-success-dark rounded-soft">
+            <p className="text-sm text-success-light dark:text-success-dark">{success}</p>
+          </div>
+        )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password *
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Must be at least 6 characters
-              </p>
-            </div>
+        {/* Registration Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="input w-full"
+              placeholder="John Doe"
+            />
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password *
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="input w-full"
+              placeholder="your@email.com"
+            />
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {loading ? "Creating Account..." : "Create Account"}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-blue-500 hover:text-blue-700 font-semibold"
-              >
-                Sign In
-              </Link>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              minLength={6}
+              className="input w-full"
+              placeholder="••••••••"
+            />
+            <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2">
+              Must be at least 6 characters
             </p>
           </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              minLength={6}
+              className="input w-full"
+              placeholder="••••••••"
+            />
+          </div>
+
+          {/* Terms Checkbox */}
+          <div className="flex items-start">
+            <input
+              type="checkbox"
+              name="agreeToTerms"
+              id="agreeToTerms"
+              checked={formData.agreeToTerms}
+              onChange={handleChange}
+              required
+              className="h-4 w-4 mt-1 text-accent focus:ring-accent border-border-light dark:border-border-dark rounded cursor-pointer"
+            />
+            <label htmlFor="agreeToTerms" className="ml-3 text-sm text-text-primary-light dark:text-text-primary-dark cursor-pointer">
+              I agree to the{" "}
+              <Link
+                href="/terms"
+                className="text-accent hover:underline"
+              >
+                Terms of Service
+              </Link>
+            </label>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-accent hover:bg-[#B8916E] text-white font-semibold py-3 px-4 rounded-soft transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Creating Account..." : "Create Account"}
+          </button>
+        </form>
+
+        {/* Login Link */}
+        <div className="mt-8 text-center border-t border-border-light dark:border-border-dark pt-6">
+          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-accent hover:underline font-medium transition-colors duration-200"
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
-    </Layout>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+      `}</style>
+    </div>
   );
 }
