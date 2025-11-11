@@ -1,52 +1,337 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Light Theme Colors - using CSS variables for dynamic theming */
+    --bg: #FDFBF9;
+    --surface: #F5F2EF;
+    --text-primary: #3C3026;
+    --text-secondary: #7B6A5E;
+    --accent: #C8A98B;
+    --border: #E5DED7;
+    --success: #4F8A5E;
+    --error: #B35B4E;
+    --hover: #EFE8E2;
   }
-}
 
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-  width: 100%;
-}
+  .dark {
+    /* Dark Theme Colors */
+    --bg: #1E1A17;
+    --surface: #29231F;
+    --text-primary: #F2EAE4;
+    --text-secondary: #BFAFA0;
+    --accent: #C8A98B;
+    --border: #3B332C;
+    --success: #5FA374;
+    --error: #CC6C5E;
+    --hover: #2E2722;
+  }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-}
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+    width: 100%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
   html {
-    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Poppins', 'Raleway', 'Montserrat', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  /* Smooth transitions for theme switching */
+  * {
+    transition-property: background-color, border-color, color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+  }
+  
+  /* Ensure smooth theme transitions */
+  html {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Remove all browser default blue highlights and outlines */
+  *:focus {
+    outline: none !important;
+  }
+
+  *:focus-visible {
+    outline: none !important;
+  }
+
+  /* Override browser default focus colors */
+  select:focus,
+  select:active {
+    outline: none !important;
+    border-color: #C8A98B !important;
+    box-shadow: 0 0 0 3px rgba(200, 169, 139, 0.1) !important;
+  }
+
+  /* Remove blue selection highlight */
+  ::selection {
+    background-color: #C8A98B;
+    color: #FFFFFF;
+  }
+
+  .dark ::selection {
+    background-color: #C8A98B;
+    color: #1E1A17;
+  }
+
+  /* Remove blue highlight on click/tap */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+}
+
+@layer components {
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-accent text-white px-6 py-2.5 rounded-soft font-semibold;
+    @apply hover:opacity-90 transition-all duration-smooth;
+    @apply shadow-soft hover:shadow-soft-lg;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+    font-weight: 600;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark;
+    @apply border border-border-light dark:border-border-dark px-6 py-2.5 rounded-soft font-semibold;
+    @apply hover:bg-hover-light dark:hover:bg-hover-dark transition-all duration-smooth;
+    @apply shadow-soft dark:shadow-soft-dark hover:shadow-soft-lg dark:hover:shadow-soft-lg-dark;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-surface-dark;
+    font-weight: 600;
+  }
+
+  .btn-text {
+    @apply text-text-primary-light dark:text-text-primary-dark font-semibold;
+    @apply hover:text-accent transition-colors duration-smooth;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-surface-dark rounded-soft;
+    font-weight: 500;
+  }
+
+  .btn-ghost {
+    @apply text-text-primary-light dark:text-text-primary-dark font-semibold;
+    @apply hover:bg-hover-light dark:hover:bg-hover-dark transition-all duration-smooth;
+    @apply px-4 py-2 rounded-soft;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-surface-dark;
+    font-weight: 500;
+  }
+
+  /* Card Styles */
+  .card {
+    @apply bg-surface-light dark:bg-surface-dark rounded-softer;
+    @apply border border-border-light dark:border-border-dark;
+    @apply shadow-soft dark:shadow-soft-dark;
+    @apply transition-all duration-smooth;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-soft-lg dark:hover:shadow-soft-lg-dark;
+    @apply hover:bg-hover-light dark:hover:bg-hover-dark;
+    /* Prevent layout shift on hover */
+    @apply will-change-auto;
+  }
+
+  /* Input Styles */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-soft;
+    @apply bg-surface-light dark:bg-surface-dark;
+    @apply border border-border-light dark:border-border-dark;
+    @apply text-text-primary-light dark:text-text-primary-dark;
+    @apply placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
+    @apply dark:focus:ring-offset-surface-dark transition-all duration-smooth;
+  }
+
+  /* Select/Dropdown Styles */
+  select {
+    @apply w-full px-4 py-2.5 rounded-soft;
+    @apply bg-surface-light dark:bg-surface-dark;
+    @apply border border-accent/50 dark:border-accent/50;
+    @apply text-text-primary-light dark:text-text-primary-dark;
+    @apply text-sm font-medium;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent;
+    @apply hover:bg-bg-light dark:hover:bg-bg-dark;
+    @apply hover:border-accent;
+    @apply transition-all duration-200;
+    @apply appearance-none;
+    @apply cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23C8A98B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+    padding-right: 2.75rem;
+    line-height: 1.6;
+    /* Remove all browser default styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Remove blue outline */
+    outline: none !important;
+  }
+
+  select:focus {
+    @apply border-accent;
+    @apply bg-bg-light dark:bg-bg-dark;
+    box-shadow: 0 0 0 3px rgba(200, 169, 139, 0.1) !important;
+    outline: none !important;
+  }
+
+  select:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(200, 169, 139, 0.1) !important;
+  }
+
+  select:disabled {
+    @apply opacity-50 cursor-not-allowed;
+    @apply bg-border-light dark:bg-border-dark;
+  }
+
+  /* Placeholder option styling */
+  select option[value=""],
+  select option:first-child {
+    color: #7B6A5E;
+  }
+
+  .dark select option[value=""],
+  .dark select option:first-child {
+    color: #BFAFA0;
+  }
+
+  /* Option styling - Light theme */
+  select option {
+    background-color: #F5F2EF !important;
+    color: #3C3026 !important;
+    padding: 0.5rem 1rem;
+  }
+
+  select option:hover {
+    background-color: #EFE8E2 !important;
+    color: #3C3026 !important;
+  }
+
+  select option:checked,
+  select option:focus {
+    background-color: #C8A98B !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Option styling - Dark theme */
+  .dark select option {
+    background-color: #29231F !important;
+    color: #F2EAE4 !important;
+  }
+
+  .dark select option:hover {
+    background-color: #2E2722 !important;
+    color: #F2EAE4 !important;
+  }
+
+  .dark select option:checked,
+  .dark select option:focus {
+    background-color: #C8A98B !important;
+    color: #1E1A17 !important;
+  }
+
+  /* Remove blue highlights in WebKit browsers (Chrome, Safari, Edge) */
+  select::-webkit-list-button,
+  select::-webkit-dropdown-button {
+    display: none;
+  }
+
+  /* Custom scrollbar for dropdown (if needed) */
+  select::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  select::-webkit-scrollbar-track {
+    background: #F5F2EF;
+    border-radius: 4px;
+  }
+
+  .dark select::-webkit-scrollbar-track {
+    background: #29231F;
+  }
+
+  select::-webkit-scrollbar-thumb {
+    background: #C8A98B;
+    border-radius: 4px;
+  }
+
+  select::-webkit-scrollbar-thumb:hover {
+    background: #B89A7A;
+  }
+
+  /* Custom Select Wrapper for better control */
+  .select-wrapper {
+    @apply relative;
+  }
+
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23C8A98B' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  /* Badge Styles */
+  .badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center;
+  }
+}
+
+/* Toast Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }

@@ -40,14 +40,16 @@ export default function CartPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+      <h1 className="text-3xl lg:text-4xl font-semibold mb-8 text-text-primary-light dark:text-text-primary-dark tracking-tight">
+        Shopping Cart
+      </h1>
 
       {items.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
-          <p className="text-gray-600 text-lg mb-4">Your cart is empty</p>
+        <div className="card p-12 text-center">
+          <p className="text-text-secondary-light dark:text-text-secondary-dark text-lg mb-6">Your cart is empty</p>
           <Link
             href="/shop"
-            className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors duration-200"
+            className="btn-primary inline-block"
           >
             Continue Shopping
           </Link>
@@ -67,14 +69,14 @@ export default function CartPage() {
               return (
                 <div
                   key={productId}
-                  className="bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row gap-4 items-center"
+                  className="card p-6 flex flex-col md:flex-row gap-4 items-center"
                 >
                   {/* Product Name */}
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark mb-2">
                       {item.name || "Product Name"}
                     </h3>
-                    <p className="text-lg font-bold text-blue-600">
+                    <p className="text-lg font-semibold text-accent">
                       ${item.price?.toFixed(2) || "0.00"}
                     </p>
                   </div>
@@ -84,21 +86,21 @@ export default function CartPage() {
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={() => decreaseQuantity(productId)}
-                        className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded transition-colors duration-200"
+                        className="bg-surface-light dark:bg-surface-dark hover:bg-hover-light dark:hover:bg-hover-dark text-text-primary-light dark:text-text-primary-dark font-semibold py-2 px-4 rounded-soft transition-all duration-smooth border border-border-light dark:border-border-dark"
                         aria-label="Decrease quantity"
                       >
                         −
                       </button>
-                      <span className="text-lg font-semibold w-12 text-center">
+                      <span className="text-lg font-semibold w-12 text-center text-text-primary-light dark:text-text-primary-dark">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => handleIncreaseQuantity(productId, item.quantity, totalStock)}
                         disabled={isMaxQuantity && totalStock > 0}
-                        className={`font-bold py-2 px-4 rounded transition-colors duration-200 ${
+                        className={`font-semibold py-2 px-4 rounded-soft transition-all duration-smooth border border-border-light dark:border-border-dark ${
                           isMaxQuantity && totalStock > 0
-                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                            ? "bg-border-light dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark cursor-not-allowed"
+                            : "bg-surface-light dark:bg-surface-dark hover:bg-hover-light dark:hover:bg-hover-dark text-text-primary-light dark:text-text-primary-dark"
                         }`}
                         aria-label="Increase quantity"
                       >
@@ -108,13 +110,13 @@ export default function CartPage() {
                     
                     {/* Stock Information */}
                     <div className="flex flex-col items-center gap-1">
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
                         Available: {remainingStock}
                       </p>
                       
                       {/* Stock Warning */}
                       {warningType === "max" && (
-                        <p className="text-xs text-red-600 font-medium">
+                        <p className="text-xs text-error-light dark:text-error-dark font-medium">
                           Max stock reached
                         </p>
                       )}
@@ -123,8 +125,8 @@ export default function CartPage() {
 
                   {/* Item Total */}
                   <div className="text-right">
-                    <p className="text-sm text-gray-500 mb-1">Total</p>
-                    <p className="text-xl font-bold text-gray-900">
+                    <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-1">Total</p>
+                    <p className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark">
                       ${itemTotal.toFixed(2)}
                     </p>
                   </div>
@@ -132,7 +134,7 @@ export default function CartPage() {
                   {/* Remove Button */}
                   <button
                     onClick={() => removeFromCart(productId)}
-                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                    className="btn-text text-error-light dark:text-error-dark hover:text-error-light dark:hover:text-error-dark"
                   >
                     Remove
                   </button>
@@ -142,10 +144,10 @@ export default function CartPage() {
           </div>
 
           {/* Total Cart Price */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="card p-6 mb-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Total</h2>
-              <p className="text-3xl font-bold text-blue-600">
+              <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark">Total</h2>
+              <p className="text-3xl font-semibold text-accent">
                 ${totalPrice.toFixed(2)}
               </p>
             </div>
@@ -155,13 +157,13 @@ export default function CartPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/shop"
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+              className="flex-1 btn-secondary text-center py-3"
             >
               Continue Shopping
             </Link>
             <Link
               href="/checkout"
-              className="flex-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+              className="flex-1 btn-primary text-center py-3"
             >
               Proceed to Checkout
             </Link>

@@ -17,7 +17,7 @@ export default function Shop({ products, error }) {
             <p>Error loading products: {error}</p>
           </div>
         ) : products && products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
             {products.map((product) => (
               <ProductCard key={product._id || product.id} product={product} />
             ))}
@@ -53,9 +53,15 @@ export async function getServerSideProps(context) {
       };
     }
 
+    // Filter products to only show those with inStock: true
+    const allProducts = data.data || [];
+    const inStockProducts = allProducts.filter(
+      (product) => product.inStock === true
+    );
+
     return {
       props: {
-        products: data.data || [],
+        products: inStockProducts,
         error: null,
       },
     };

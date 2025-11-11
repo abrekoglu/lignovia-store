@@ -253,7 +253,9 @@ export default function MyAddresses() {
   if (status === "loading" || loading) {
     return (
       <Layout>
-        <div className="text-center py-12">Loading...</div>
+        <div className="text-center py-12">
+          <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading...</p>
+        </div>
       </Layout>
     );
   }
@@ -265,25 +267,27 @@ export default function MyAddresses() {
   return (
     <Layout>
       <Head>
-        <title>My Addresses - Lignovia Store</title>
+        <title>My Addresses - LIGNOVIA</title>
         <meta name="description" content="Manage your shipping and billing addresses" />
       </Head>
-      <div>
-        <h1 className="text-3xl font-bold mb-8">My Addresses</h1>
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl lg:text-4xl font-semibold mb-8 lg:mb-12 text-text-primary-light dark:text-text-primary-dark tracking-tight">
+          My Addresses
+        </h1>
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <div className="flex space-x-4">
+        <div className="mb-8 border-b border-border-light dark:border-border-dark">
+          <div className="flex space-x-6">
             <button
               onClick={() => {
                 setActiveTab("shipping");
                 setShowAddressForm(false);
                 setEditingAddress(null);
               }}
-              className={`py-2 px-4 font-medium border-b-2 transition-colors ${
+              className={`py-3 px-1 font-semibold border-b-2 transition-all duration-200 ${
                 activeTab === "shipping"
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-text-secondary-light dark:text-text-secondary-dark hover:text-accent"
               }`}
             >
               Shipping Addresses
@@ -294,10 +298,10 @@ export default function MyAddresses() {
                 setShowBillingForm(false);
                 setEditingBilling(null);
               }}
-              className={`py-2 px-4 font-medium border-b-2 transition-colors ${
+              className={`py-3 px-1 font-semibold border-b-2 transition-all duration-200 ${
                 activeTab === "billing"
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-text-secondary-light dark:text-text-secondary-dark hover:text-accent"
               }`}
             >
               Billing Profiles
@@ -307,21 +311,23 @@ export default function MyAddresses() {
 
         {/* Messages */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="card border-error-light dark:border-error-dark bg-error-light/10 dark:bg-error-dark/10 p-4 mb-6">
+            <p className="text-error-light dark:text-error-dark text-sm font-medium">{error}</p>
           </div>
         )}
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {success}
+          <div className="card border-success-light dark:border-success-dark bg-success-light/10 dark:bg-success-dark/10 p-4 mb-6">
+            <p className="text-success-light dark:text-success-dark text-sm font-medium">{success}</p>
           </div>
         )}
 
         {/* Shipping Addresses Tab */}
         {activeTab === "shipping" && (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">Shipping Addresses</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+              <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+                Shipping Addresses
+              </h2>
               <button
                 onClick={() => {
                   setShowAddressForm(!showAddressForm);
@@ -337,22 +343,22 @@ export default function MyAddresses() {
                     isDefault: false,
                   });
                 }}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                className="btn-primary w-full sm:w-auto"
               >
-                {showAddressForm ? "Cancel" : "+ Add Address"}
+                {showAddressForm ? "Cancel" : "+ Add New Address"}
               </button>
             </div>
 
             {/* Add/Edit Address Form */}
             {showAddressForm && (
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h3 className="text-xl font-semibold mb-4">
+              <div className="card p-6 lg:p-8 mb-8">
+                <h3 className="text-xl font-semibold mb-6 text-text-primary-light dark:text-text-primary-dark tracking-tight">
                   {editingAddress ? "Edit Address" : "Add New Address"}
                 </h3>
-                <form onSubmit={handleAddressSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onSubmit={handleAddressSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Full Name *
                       </label>
                       <input
@@ -362,11 +368,11 @@ export default function MyAddresses() {
                           setAddressForm({ ...addressForm, fullName: e.target.value })
                         }
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Phone Number *
                       </label>
                       <input
@@ -376,11 +382,11 @@ export default function MyAddresses() {
                           setAddressForm({ ...addressForm, phone: e.target.value })
                         }
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Postal Code *
                       </label>
                       <input
@@ -390,11 +396,11 @@ export default function MyAddresses() {
                           setAddressForm({ ...addressForm, postalCode: e.target.value })
                         }
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input"
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Address Line *
                       </label>
                       <textarea
@@ -404,11 +410,11 @@ export default function MyAddresses() {
                         }
                         required
                         rows="3"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input resize-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         City *
                       </label>
                       <input
@@ -418,11 +424,11 @@ export default function MyAddresses() {
                           setAddressForm({ ...addressForm, city: e.target.value })
                         }
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Country *
                       </label>
                       <input
@@ -432,11 +438,11 @@ export default function MyAddresses() {
                           setAddressForm({ ...addressForm, country: e.target.value })
                         }
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input"
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Note (Optional)
                       </label>
                       <textarea
@@ -445,27 +451,27 @@ export default function MyAddresses() {
                           setAddressForm({ ...addressForm, note: e.target.value })
                         }
                         rows="2"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="input resize-none"
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="flex items-center">
+                      <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           checked={addressForm.isDefault}
                           onChange={(e) =>
                             setAddressForm({ ...addressForm, isDefault: e.target.checked })
                           }
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-accent focus:ring-accent border-border-light dark:border-border-dark rounded cursor-pointer"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Set as default address</span>
+                        <span className="ml-3 text-sm text-text-primary-light dark:text-text-primary-dark">Set as default address</span>
                       </label>
                     </div>
                   </div>
-                  <div className="flex gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
                     <button
                       type="submit"
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                      className="btn-primary w-full sm:w-auto"
                     >
                       {editingAddress ? "Update Address" : "Add Address"}
                     </button>
@@ -475,7 +481,7 @@ export default function MyAddresses() {
                         setShowAddressForm(false);
                         setEditingAddress(null);
                       }}
-                      className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors duration-200"
+                      className="btn-secondary w-full sm:w-auto"
                     >
                       Cancel
                     </button>
@@ -485,67 +491,134 @@ export default function MyAddresses() {
             )}
 
             {/* Addresses List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {addresses.map((address) => (
-                <div
-                  key={address._id}
-                  className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-blue-300 transition-colors"
-                >
-                  {address.isDefault && (
-                    <div className="mb-3">
-                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                        Default
-                      </span>
+            {addresses.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {addresses.map((address) => (
+                  <div
+                    key={address._id}
+                    className="card p-5 lg:p-6 relative"
+                  >
+                    {/* Action Buttons - Top Right */}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <button
+                        onClick={() => handleEditAddress(address)}
+                        className="text-accent hover:opacity-70 transition-opacity duration-200 p-1.5"
+                        aria-label="Edit address"
+                        title="Edit address"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAddress(address._id)}
+                        className="text-error-light dark:text-error-dark hover:opacity-70 transition-opacity duration-200 p-1.5"
+                        aria-label="Delete address"
+                        title="Delete address"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
+                        </svg>
+                      </button>
                     </div>
-                  )}
-                  <div className="space-y-2 mb-4">
-                    <p className="font-semibold text-gray-900">{address.fullName}</p>
-                    <p className="text-sm text-gray-600">{address.phone}</p>
-                    <p className="text-sm text-gray-600">{address.address}</p>
-                    <p className="text-sm text-gray-600">
-                      {address.city}, {address.postalCode}, {address.country}
-                    </p>
-                    {address.note && (
-                      <p className="text-xs text-gray-500 italic">Note: {address.note}</p>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditAddress(address)}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-3 rounded transition-colors duration-200"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteAddress(address._id)}
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 px-3 rounded transition-colors duration-200"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
 
-            {addresses.length === 0 && !showAddressForm && (
-              <div className="bg-white rounded-lg shadow-md p-12 text-center">
-                <p className="text-gray-600 mb-4">No shipping addresses saved yet.</p>
+                    {/* Default Badge */}
+                    {address.isDefault && (
+                      <div className="mb-4">
+                        <span className="badge bg-accent/20 text-accent">
+                          Default Address
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Address Content */}
+                    <div className="space-y-2 pr-12">
+                      <p className="font-semibold text-lg text-text-primary-light dark:text-text-primary-dark">
+                        {address.fullName}
+                      </p>
+                      {address.phone && (
+                        <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                          {address.phone}
+                        </p>
+                      )}
+                      <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
+                        {address.address}
+                      </p>
+                      <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                        {address.city}, {address.postalCode}, {address.country}
+                      </p>
+                      {address.note && (
+                        <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark italic mt-3 pt-3 border-t border-border-light dark:border-border-dark">
+                          Note: {address.note}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : !showAddressForm ? (
+              <div className="card p-12 lg:p-16 text-center">
+                <div className="mb-6 flex justify-center">
+                  <svg
+                    className="w-16 h-16 text-accent"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-text-secondary-light dark:text-text-secondary-dark text-lg mb-6">
+                  You haven't added any addresses yet.
+                </p>
                 <button
                   onClick={() => setShowAddressForm(true)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                  className="btn-primary"
                 >
                   Add Your First Address
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
         )}
 
         {/* Billing Profiles Tab */}
         {activeTab === "billing" && (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">Billing Profiles</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+              <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+                Billing Profiles
+              </h2>
               <button
                 onClick={() => {
                   setShowBillingForm(!showBillingForm);
@@ -566,25 +639,25 @@ export default function MyAddresses() {
                     isDefault: false,
                   });
                 }}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                className="btn-primary w-full sm:w-auto"
               >
-                {showBillingForm ? "Cancel" : "+ Add Billing Profile"}
+                {showBillingForm ? "Cancel" : "+ Add New Billing Profile"}
               </button>
             </div>
 
             {/* Add/Edit Billing Form */}
             {showBillingForm && (
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h3 className="text-xl font-semibold mb-4">
+              <div className="card p-6 lg:p-8 mb-8">
+                <h3 className="text-xl font-semibold mb-6 text-text-primary-light dark:text-text-primary-dark tracking-tight">
                   {editingBilling ? "Edit Billing Profile" : "Add New Billing Profile"}
                 </h3>
-                <form onSubmit={handleBillingSubmit} className="space-y-4">
+                <form onSubmit={handleBillingSubmit} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-4">
                       Type *
                     </label>
                     <div className="flex gap-6">
-                      <label className="flex items-center">
+                      <label className="flex items-center cursor-pointer">
                         <input
                           type="radio"
                           value="individual"
@@ -592,11 +665,11 @@ export default function MyAddresses() {
                           onChange={(e) =>
                             setBillingForm({ ...billingForm, type: e.target.value })
                           }
-                          className="mr-2"
+                          className="mr-3 text-accent focus:ring-accent border-border-light dark:border-border-dark cursor-pointer"
                         />
-                        <span>Individual</span>
+                        <span className="text-text-primary-light dark:text-text-primary-dark">Individual</span>
                       </label>
-                      <label className="flex items-center">
+                      <label className="flex items-center cursor-pointer">
                         <input
                           type="radio"
                           value="corporate"
@@ -604,17 +677,17 @@ export default function MyAddresses() {
                           onChange={(e) =>
                             setBillingForm({ ...billingForm, type: e.target.value })
                           }
-                          className="mr-2"
+                          className="mr-3 text-accent focus:ring-accent border-border-light dark:border-border-dark cursor-pointer"
                         />
-                        <span>Corporate</span>
+                        <span className="text-text-primary-light dark:text-text-primary-dark">Corporate</span>
                       </label>
                     </div>
                   </div>
 
                   {billingForm.type === "individual" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Full Name *
                         </label>
                         <input
@@ -624,11 +697,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, fullName: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Phone Number *
                         </label>
                         <input
@@ -638,11 +711,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, phone: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Postal Code *
                         </label>
                         <input
@@ -652,11 +725,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, postalCode: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Address Line *
                         </label>
                         <textarea
@@ -666,11 +739,11 @@ export default function MyAddresses() {
                           }
                           required
                           rows="3"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input resize-none"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           City *
                         </label>
                         <input
@@ -680,11 +753,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, city: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Country *
                         </label>
                         <input
@@ -694,14 +767,14 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, country: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Company Name *
                         </label>
                         <input
@@ -711,11 +784,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, companyName: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Tax Number *
                         </label>
                         <input
@@ -725,11 +798,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, taxNumber: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Tax Office *
                         </label>
                         <input
@@ -739,11 +812,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, taxOffice: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Email *
                         </label>
                         <input
@@ -753,11 +826,11 @@ export default function MyAddresses() {
                             setBillingForm({ ...billingForm, email: e.target.value })
                           }
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input"
                         />
                       </div>
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                           Billing Address *
                         </label>
                         <textarea
@@ -767,30 +840,30 @@ export default function MyAddresses() {
                           }
                           required
                           rows="3"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="input resize-none"
                         />
                       </div>
                     </div>
                   )}
 
                   <div>
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
                         checked={billingForm.isDefault}
                         onChange={(e) =>
                           setBillingForm({ ...billingForm, isDefault: e.target.checked })
                         }
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="h-4 w-4 text-accent focus:ring-accent border-border-light dark:border-border-dark rounded cursor-pointer"
                       />
-                      <span className="ml-2 text-sm text-gray-700">Set as default billing profile</span>
+                      <span className="ml-3 text-sm text-text-primary-light dark:text-text-primary-dark">Set as default billing profile</span>
                     </label>
                   </div>
 
-                  <div className="flex gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
                     <button
                       type="submit"
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                      className="btn-primary w-full sm:w-auto"
                     >
                       {editingBilling ? "Update Profile" : "Add Profile"}
                     </button>
@@ -800,7 +873,7 @@ export default function MyAddresses() {
                         setShowBillingForm(false);
                         setEditingBilling(null);
                       }}
-                      className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-colors duration-200"
+                      className="btn-secondary w-full sm:w-auto"
                     >
                       Cancel
                     </button>
@@ -810,79 +883,158 @@ export default function MyAddresses() {
             )}
 
             {/* Billing Profiles List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {billingProfiles.map((profile) => (
-                <div
-                  key={profile._id}
-                  className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-blue-300 transition-colors"
-                >
-                  {profile.isDefault && (
-                    <div className="mb-3">
-                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                        Default
+            {billingProfiles.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {billingProfiles.map((profile) => (
+                  <div
+                    key={profile._id}
+                    className="card p-5 lg:p-6 relative"
+                  >
+                    {/* Action Buttons - Top Right */}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <button
+                        onClick={() => handleEditBilling(profile)}
+                        className="text-accent hover:opacity-70 transition-opacity duration-200 p-1.5"
+                        aria-label="Edit billing profile"
+                        title="Edit billing profile"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteBilling(profile._id)}
+                        className="text-error-light dark:text-error-dark hover:opacity-70 transition-opacity duration-200 p-1.5"
+                        aria-label="Delete billing profile"
+                        title="Delete billing profile"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Badges */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {profile.isDefault && (
+                        <span className="badge bg-accent/20 text-accent">
+                          Default
+                        </span>
+                      )}
+                      <span className={`badge ${
+                        profile.type === "corporate"
+                          ? "bg-accent/10 text-accent"
+                          : "bg-surface-light dark:bg-surface-dark text-text-secondary-light dark:text-text-secondary-dark border border-border-light dark:border-border-dark"
+                      }`}>
+                        {profile.type === "corporate" ? "Corporate" : "Individual"}
                       </span>
                     </div>
-                  )}
-                  <div className="mb-3">
-                    <span
-                      className={`text-xs font-semibold px-2 py-1 rounded ${
-                        profile.type === "corporate"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {profile.type === "corporate" ? "Corporate" : "Individual"}
-                    </span>
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    {profile.type === "individual" ? (
-                      <>
-                        <p className="font-semibold text-gray-900">{profile.fullName}</p>
-                        <p className="text-sm text-gray-600">{profile.phone}</p>
-                        <p className="text-sm text-gray-600">{profile.address}</p>
-                        <p className="text-sm text-gray-600">
-                          {profile.city}, {profile.postalCode}, {profile.country}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="font-semibold text-gray-900">{profile.companyName}</p>
-                        <p className="text-sm text-gray-600">Tax: {profile.taxNumber}</p>
-                        <p className="text-sm text-gray-600">Tax Office: {profile.taxOffice}</p>
-                        <p className="text-sm text-gray-600">Email: {profile.email}</p>
-                        <p className="text-sm text-gray-600">{profile.billingAddress}</p>
-                      </>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditBilling(profile)}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-3 rounded transition-colors duration-200"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteBilling(profile._id)}
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 px-3 rounded transition-colors duration-200"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
 
-            {billingProfiles.length === 0 && !showBillingForm && (
-              <div className="bg-white rounded-lg shadow-md p-12 text-center">
-                <p className="text-gray-600 mb-4">No billing profiles saved yet.</p>
+                    {/* Profile Content */}
+                    <div className="space-y-2 pr-12">
+                      {profile.type === "individual" ? (
+                        <>
+                          <p className="font-semibold text-lg text-text-primary-light dark:text-text-primary-dark">
+                            {profile.fullName}
+                          </p>
+                          {profile.phone && (
+                            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                              {profile.phone}
+                            </p>
+                          )}
+                          {profile.address && (
+                            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
+                              {profile.address}
+                            </p>
+                          )}
+                          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            {profile.city}
+                            {profile.postalCode && `, ${profile.postalCode}`}
+                            {profile.country && `, ${profile.country}`}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-semibold text-lg text-text-primary-light dark:text-text-primary-dark">
+                            {profile.companyName}
+                          </p>
+                          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            Tax: {profile.taxNumber}
+                          </p>
+                          {profile.taxOffice && (
+                            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                              Tax Office: {profile.taxOffice}
+                            </p>
+                          )}
+                          {profile.email && (
+                            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                              Email: {profile.email}
+                            </p>
+                          )}
+                          {profile.billingAddress && (
+                            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
+                              {profile.billingAddress}
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : !showBillingForm ? (
+              <div className="card p-12 lg:p-16 text-center">
+                <div className="mb-6 flex justify-center">
+                  <svg
+                    className="w-16 h-16 text-accent"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-text-secondary-light dark:text-text-secondary-dark text-lg mb-6">
+                  You haven't added any billing profiles yet.
+                </p>
                 <button
                   onClick={() => setShowBillingForm(true)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                  className="btn-primary"
                 >
                   Add Your First Billing Profile
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
         )}
       </div>

@@ -1,22 +1,33 @@
 import Head from "next/head";
+import Link from "next/link";
 import Layout from "@/components/Layout";
 
 export default function Home() {
   return (
     <Layout>
       <Head>
-        <title>Home - Lignovia Store</title>
-        <meta name="description" content="Welcome to Lignovia Store" />
+        <title>Home - LIGNOVIA</title>
+        <meta name="description" content="Welcome to LIGNOVIA - Craftsmanship, precision, and serenity" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        <h1 className="text-4xl font-bold mb-6">Home Page</h1>
-        <p className="text-lg mb-4">Welcome to Lignovia Store!</p>
-        <div className="mt-8">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
-            Tailwind CSS Test Button
-          </button>
+      <div className="max-w-4xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center py-12 lg:py-20">
+          <h1 className="text-4xl lg:text-5xl font-semibold text-text-primary-light dark:text-text-primary-dark mb-6 tracking-tight">
+            Craftsmanship, Precision, Serenity
+          </h1>
+          <p className="text-lg lg:text-xl text-text-secondary-light dark:text-text-secondary-dark mb-8 max-w-2xl mx-auto leading-relaxed">
+            Welcome to LIGNOVIA — a modern woodcraft studio bringing you quality products with elegant design.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/shop" className="btn-primary">
+              Explore Shop
+            </Link>
+            <Link href="/cart" className="btn-secondary">
+              View Cart
+            </Link>
+          </div>
         </div>
       </div>
     </Layout>

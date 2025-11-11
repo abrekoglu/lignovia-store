@@ -11,7 +11,7 @@ export default function Checkout() {
   return (
     <Layout>
       <Head>
-        <title>Checkout - Lignovia Store</title>
+        <title>Checkout - LIGNOVIA</title>
         <meta name="description" content="Complete your purchase" />
       </Head>
       <CheckoutForm />

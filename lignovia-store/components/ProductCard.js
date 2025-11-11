@@ -2,11 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import useCartStore from "@/store/cartStore";
+import CartToast from "./CartToast";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onAddToCart }) {
   const { addToCart } = useCartStore();
   const cart = useCartStore((state) => state.items);
   const [showMaxStockWarning, setShowMaxStockWarning] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const stock = product?.stock !== undefined ? product.stock : 0;
   
@@ -66,12 +68,21 @@ export default function ProductCard({ product }) {
     };
     
     addToCart(productData);
+    
+    // Show toast notification
+    setShowToast(true);
+    
+    // Notify parent component if callback provided
+    if (onAddToCart) {
+      onAddToCart();
+    }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="card-hover overflow-hidden p-0 flex flex-col h-full">
+      {/* Image Area - Fixed Height */}
       <Link href={`/product/${product?.slug || "product-slug"}`}>
-        <div className="relative h-48 bg-gray-200">
+        <div className="relative h-48 bg-surface-light dark:bg-surface-dark flex-shrink-0">
           {product?.image ? (
             <Image
               src={product.image}
@@ -80,80 +91,86 @@ export default function ProductCard({ product }) {
               className="object-cover"
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
+            <div className="flex items-center justify-center h-full text-text-secondary-light dark:text-text-secondary-dark">
               No Image
             </div>
           )}
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2">
-            {product?.name || "Product Name"}
-          </h3>
-          <p className="text-gray-600 mb-2">
-            {product?.description || "Product description"}
-          </p>
-          <p className="text-xl font-bold text-blue-600 mb-2">
+      </Link>
+
+      {/* Content Area - Flexible, grows to fill space */}
+      <div className="flex flex-col flex-1 p-5 min-h-0">
+        {/* Title + Description Area - Flexible */}
+        <div className="flex-1 mb-5 min-h-0">
+          <Link href={`/product/${product?.slug || "product-slug"}`}>
+            <h3 className="text-lg font-semibold mb-2 text-text-primary-light dark:text-text-primary-dark line-clamp-2">
+              {product?.name || "Product Name"}
+            </h3>
+            <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm leading-relaxed line-clamp-2">
+              {product?.description || "Product description"}
+            </p>
+          </Link>
+        </div>
+
+        {/* Price + Stock Badge Row - Fixed Position */}
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+          <p className="text-xl font-semibold text-accent">
             ${product?.price?.toFixed(2) || "0.00"}
           </p>
-          {/* Stock Information */}
+          {/* Stock Badge */}
           {isOutOfStock ? (
-            <span className="inline-block bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded mb-2">
+            <span className="badge bg-error-light dark:bg-error-dark text-white text-xs">
               Sold Out
             </span>
           ) : isMaxAdded ? (
-            <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded mb-2">
+            <span className="badge bg-accent/20 text-accent text-xs">
               Max Added
             </span>
-          ) : isLowStock ? (
-            <p className="text-sm text-orange-600 font-medium mb-2">
-              Only {remainingStock} left
-            </p>
           ) : null}
         </div>
-      </Link>
-      <div className="px-4 pb-4">
-        {/* Out of Stock Warning Message */}
-        {isOutOfStock && (
-          <p className="text-red-600 text-sm font-medium mb-2 mt-2">
-            This product is out of stock.
-          </p>
-        )}
-        
-        {/* Max Stock Warning Message */}
-        {showMaxStockWarning && (
-          <p className="text-red-600 text-xs mb-2 mt-2">
-            {isMaxAdded ? "Max added" : "You already added the maximum available stock."}
-          </p>
-        )}
 
-        <div className="flex items-center gap-2">
+        {/* Fixed Lower Section - Stock Message + Button */}
+        <div className="flex flex-col gap-2 flex-shrink-0">
+          {/* Stock Warning Message - Always Reserved Space */}
+          <div className="h-5 flex items-center">
+            {isOutOfStock ? (
+              <p className="text-error-light dark:text-error-dark text-xs font-medium">
+                Out of stock
+              </p>
+            ) : showMaxStockWarning ? (
+              <p className="text-error-light dark:text-error-dark text-xs font-medium">
+                {isMaxAdded ? "Max added" : "Max stock reached"}
+              </p>
+            ) : isLowStock ? (
+              <p className="text-error-light dark:text-error-dark text-xs font-medium">
+                Only {remainingStock} left
+              </p>
+            ) : (
+              <div className="h-5"></div> // Spacer to maintain consistent height
+            )}
+          </div>
+
+          {/* Add to Cart Button - Always Fully Visible */}
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock || isMaxAdded}
-            className={`flex-1 font-bold py-2 px-4 rounded transition-colors duration-200 ${
+            className={`w-full py-2.5 px-4 rounded-soft transition-all duration-smooth font-semibold flex-shrink-0 ${
               isOutOfStock || isMaxAdded
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600 text-white"
+                ? "bg-border-light dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark cursor-not-allowed"
+                : "btn-primary"
             }`}
           >
             {isOutOfStock ? "Sold Out" : isMaxAdded ? "Max Added" : "Add to Cart"}
           </button>
-          
-          {/* In Cart Indicator */}
-          {isInCart && !isOutOfStock && (
-            <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
-              In Cart: {cartQuantity}
-            </span>
-          )}
-          
-          {/* Remaining Stock Indicator (when not max added) */}
-          {!isMaxAdded && !isOutOfStock && remainingStock > 0 && (
-            <span className="text-xs text-gray-500 whitespace-nowrap">
-              ({remainingStock} available)
-            </span>
-          )}
         </div>
       </div>
+      
+      {/* Cart Toast Notification */}
+      <CartToast
+        message="Product added to your cart"
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 }

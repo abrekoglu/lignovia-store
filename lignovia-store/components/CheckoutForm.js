@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import useCartStore, { useCartTotalPrice } from "@/store/cartStore";
+import OrderConfirmation from "./OrderConfirmation";
 
 export default function CheckoutForm() {
   const router = useRouter();
@@ -20,6 +22,7 @@ export default function CheckoutForm() {
   const [selectedBillingId, setSelectedBillingId] = useState("");
   const [useNewAddress, setUseNewAddress] = useState(true);
   const [useNewBilling, setUseNewBilling] = useState(true);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   // Fetch saved addresses and billing profiles
   useEffect(() => {
@@ -217,8 +220,13 @@ export default function CheckoutForm() {
       // Clear cart
       clearCart();
 
-      // Redirect to thank-you page with order ID
-      router.push(`/thank-you?orderId=${data.orderId}`);
+      // Show confirmation modal
+      setShowConfirmation(true);
+      
+      // Redirect to thank-you page after a short delay
+      setTimeout(() => {
+        router.push(`/thank-you?orderId=${data.orderId}`);
+      }, 2000);
     } catch (err) {
       setError("An error occurred. Please try again.");
       setLoading(false);
@@ -227,50 +235,58 @@ export default function CheckoutForm() {
 
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-12 text-center">
-        <h1 className="text-3xl font-bold mb-4">Checkout</h1>
-        <p className="text-gray-600 text-lg mb-4">Your cart is empty</p>
-        <button
-          onClick={() => router.push("/shop")}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors duration-200"
+      <div className="card p-12 text-center">
+        <h1 className="text-3xl lg:text-4xl font-semibold mb-4 text-text-primary-light dark:text-text-primary-dark tracking-tight">
+          Checkout
+        </h1>
+        <p className="text-text-secondary-light dark:text-text-secondary-dark text-lg mb-6">Your cart is empty</p>
+        <Link
+          href="/shop"
+          className="btn-primary inline-block"
         >
           Continue Shopping
-        </button>
+        </Link>
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="max-w-7xl mx-auto">
+      <h1 className="text-3xl lg:text-4xl font-semibold mb-8 lg:mb-12 text-text-primary-light dark:text-text-primary-dark tracking-tight">
+        Checkout
+      </h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Checkout Forms */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        {/* Checkout Forms - Left Column */}
+        <div className="space-y-6">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
+            <div className="card border-error-light dark:border-error-dark bg-error-light/10 dark:bg-error-dark/10 p-4">
+              <p className="text-error-light dark:text-error-dark text-sm font-medium">{error}</p>
             </div>
           )}
 
           {loadingPreviousData && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded text-sm">
-              Loading your previous address information...
+            <div className="card p-4">
+              <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm">
+                Loading your previous address information...
+              </p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Shipping Address Section */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="card p-6 lg:p-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold">Shipping Address</h2>
+                <h2 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+                  Shipping Address
+                </h2>
                 {session?.user && (
-                  <a
+                  <Link
                     href="/my-addresses"
-                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    className="btn-text text-sm"
                   >
                     Manage Addresses
-                  </a>
+                  </Link>
                 )}
               </div>
 
@@ -278,7 +294,7 @@ export default function CheckoutForm() {
                 addresses.length > 0 ? (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
                         Select Shipping Address *
                       </label>
                       <select
@@ -292,7 +308,6 @@ export default function CheckoutForm() {
                           }
                         }}
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="">-- Select a shipping address --</option>
                         {addresses.map((address) => (
@@ -304,7 +319,7 @@ export default function CheckoutForm() {
                       </select>
                     </div>
                     {selectedAddressId && (
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="mt-4 p-5 bg-hover-light dark:bg-hover-dark rounded-softer border border-border-light dark:border-border-dark">
                         {(() => {
                           const selectedAddress = addresses.find(
                             (a) => a._id === selectedAddressId
@@ -313,37 +328,37 @@ export default function CheckoutForm() {
 
                           return (
                             <div className="space-y-2 text-sm">
-                              <p className="font-semibold text-gray-900 text-base mb-3">
+                              <p className="font-semibold text-text-primary-light dark:text-text-primary-dark text-base mb-3">
                                 {selectedAddress.fullName}
                               </p>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 {selectedAddress.phone && (
-                                  <p className="text-gray-600">
-                                    <span className="font-medium text-gray-700">Phone:</span>{" "}
+                                  <p className="text-text-secondary-light dark:text-text-secondary-dark">
+                                    <span className="font-medium text-text-primary-light dark:text-text-primary-dark">Phone:</span>{" "}
                                     {selectedAddress.phone}
                                   </p>
                                 )}
                                 {selectedAddress.postalCode && (
-                                  <p className="text-gray-600">
-                                    <span className="font-medium text-gray-700">Postal Code:</span>{" "}
+                                  <p className="text-text-secondary-light dark:text-text-secondary-dark">
+                                    <span className="font-medium text-text-primary-light dark:text-text-primary-dark">Postal Code:</span>{" "}
                                     {selectedAddress.postalCode}
                                   </p>
                                 )}
                               </div>
                               {selectedAddress.address && (
-                                <p className="text-gray-600">
-                                  <span className="font-medium text-gray-700">Address:</span>{" "}
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark">
+                                  <span className="font-medium text-text-primary-light dark:text-text-primary-dark">Address:</span>{" "}
                                   {selectedAddress.address}
                                 </p>
                               )}
-                              <p className="text-gray-600">
-                                <span className="font-medium text-gray-700">City:</span>{" "}
+                              <p className="text-text-secondary-light dark:text-text-secondary-dark">
+                                <span className="font-medium text-text-primary-light dark:text-text-primary-dark">City:</span>{" "}
                                 {selectedAddress.city}
                                 {selectedAddress.country && `, ${selectedAddress.country}`}
                               </p>
                               {selectedAddress.note && (
-                                <p className="text-gray-600 pt-2 border-t border-gray-300">
-                                  <span className="font-medium text-gray-700">Delivery Note:</span>{" "}
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark pt-3 border-t border-border-light dark:border-border-dark">
+                                  <span className="font-medium text-text-primary-light dark:text-text-primary-dark">Delivery Note:</span>{" "}
                                   <span className="italic">{selectedAddress.note}</span>
                                 </p>
                               )}
@@ -354,25 +369,25 @@ export default function CheckoutForm() {
                     )}
                   </div>
                 ) : (
-                  <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-800 mb-3">
+                  <div className="card p-6">
+                    <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-4">
                       You don't have any shipping addresses saved yet.
                     </p>
-                    <a
+                    <Link
                       href="/my-addresses"
-                      className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-200 text-sm"
+                      className="btn-primary inline-block text-sm"
                     >
                       Create Shipping Address
-                    </a>
+                    </Link>
                   </div>
                 )
               ) : (
-                <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-3">
+                <div className="card p-6">
+                  <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-3">
                     Please{" "}
-                    <a href="/login" className="text-blue-600 hover:text-blue-800 underline">
+                    <Link href="/login" className="text-accent hover:opacity-80 underline">
                       log in
-                    </a>{" "}
+                    </Link>{" "}
                     to use saved shipping addresses.
                   </p>
                 </div>
@@ -380,16 +395,18 @@ export default function CheckoutForm() {
             </div>
 
             {/* Billing Information Section */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="card p-6 lg:p-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold">Billing Information</h2>
+                <h2 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+                  Billing Information
+                </h2>
                 {session?.user && (
-                  <a
+                  <Link
                     href="/my-addresses"
-                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    className="btn-text text-sm"
                   >
                     Manage Billing Profiles
-                  </a>
+                  </Link>
                 )}
               </div>
 
@@ -397,8 +414,8 @@ export default function CheckoutForm() {
                 billingProfiles.length > 0 ? (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Billing Profile *
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3">
+                        Select Billing Profile {billingProfiles.length > 0 && "*"}
                       </label>
                       <select
                         value={selectedBillingId || ""}
@@ -411,7 +428,6 @@ export default function CheckoutForm() {
                           }
                         }}
                         required={billingProfiles.length > 0}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="">-- Select a billing profile --</option>
                         {billingProfiles.map((profile) => (
@@ -425,7 +441,7 @@ export default function CheckoutForm() {
                       </select>
                     </div>
                     {selectedBillingId && (
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="mt-4 p-5 bg-hover-light dark:bg-hover-dark rounded-softer border border-border-light dark:border-border-dark">
                         {(() => {
                           const selectedProfile = billingProfiles.find(
                             (p) => p._id === selectedBillingId
@@ -434,44 +450,44 @@ export default function CheckoutForm() {
                           
                           return selectedProfile.type === "corporate" ? (
                             <div className="space-y-2 text-sm">
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-semibold text-text-primary-light dark:text-text-primary-dark">
                                 {selectedProfile.companyName}
                               </p>
-                              <p className="text-gray-600">
+                              <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                 Tax Number: {selectedProfile.taxNumber}
                               </p>
                               {selectedProfile.taxOffice && (
-                                <p className="text-gray-600">
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                   Tax Office: {selectedProfile.taxOffice}
                                 </p>
                               )}
                               {selectedProfile.email && (
-                                <p className="text-gray-600">
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                   Email: {selectedProfile.email}
                                 </p>
                               )}
                               {selectedProfile.billingAddress && (
-                                <p className="text-gray-600">
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                   Address: {selectedProfile.billingAddress}
                                 </p>
                               )}
                             </div>
                           ) : (
                             <div className="space-y-2 text-sm">
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-semibold text-text-primary-light dark:text-text-primary-dark">
                                 {selectedProfile.fullName}
                               </p>
                               {selectedProfile.phone && (
-                                <p className="text-gray-600">
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                   Phone: {selectedProfile.phone}
                                 </p>
                               )}
                               {selectedProfile.address && (
-                                <p className="text-gray-600">
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                   {selectedProfile.address}
                                 </p>
                               )}
-                              <p className="text-gray-600">
+                              <p className="text-text-secondary-light dark:text-text-secondary-dark">
                                 {selectedProfile.city}
                                 {selectedProfile.postalCode && `, ${selectedProfile.postalCode}`}
                                 {selectedProfile.country && `, ${selectedProfile.country}`}
@@ -483,46 +499,58 @@ export default function CheckoutForm() {
                     )}
                   </div>
                 ) : (
-                  <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-800 mb-3">
+                  <div className="card p-6">
+                    <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-4">
                       You don't have any billing profiles saved yet.
                     </p>
-                    <a
+                    <Link
                       href="/my-addresses"
-                      className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-200 text-sm"
+                      className="btn-primary inline-block text-sm"
                     >
                       Create Billing Profile
-                    </a>
+                    </Link>
                   </div>
                 )
               ) : (
-                <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-3">
+                <div className="card p-6">
+                  <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-3">
                     Please{" "}
-                    <a href="/login" className="text-blue-600 hover:text-blue-800 underline">
+                    <Link href="/login" className="text-accent hover:opacity-80 underline">
                       log in
-                    </a>{" "}
+                    </Link>{" "}
                     to use billing profiles.
                   </p>
                 </div>
               )}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {loading ? "Processing..." : "Place Order"}
-            </button>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link
+                href="/cart"
+                className="btn-text text-center py-3 order-2 sm:order-1"
+              >
+                Back to Cart
+              </Link>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full sm:flex-1 py-3 order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Processing..." : "Place Order"}
+              </button>
+            </div>
           </form>
         </div>
 
-        {/* Cart Summary */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
-            <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
+        {/* Order Summary - Right Column */}
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="card p-6 lg:p-8">
+            <h2 className="text-xl font-semibold mb-6 text-text-primary-light dark:text-text-primary-dark tracking-tight">
+              Order Summary
+            </h2>
 
+            {/* Product List */}
             <div className="space-y-4 mb-6">
               {items.map((item) => {
                 const productId = item._id || item.id;
@@ -531,17 +559,17 @@ export default function CheckoutForm() {
                 return (
                   <div
                     key={productId}
-                    className="flex justify-between items-center pb-4 border-b border-gray-200"
+                    className="flex justify-between items-start pb-4 border-b border-border-light dark:border-border-dark last:border-0 last:pb-0"
                   >
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">
+                    <div className="flex-1 pr-4">
+                      <p className="font-semibold text-text-primary-light dark:text-text-primary-dark mb-1">
                         {item.name || "Product"}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        Quantity: {item.quantity} × ${item.price?.toFixed(2)}
+                      <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
+                        {item.quantity} × ${item.price?.toFixed(2)}
                       </p>
                     </div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-text-primary-light dark:text-text-primary-dark whitespace-nowrap">
                       ${itemTotal.toFixed(2)}
                     </p>
                   </div>
@@ -549,10 +577,21 @@ export default function CheckoutForm() {
               })}
             </div>
 
-            <div className="border-t border-gray-200 pt-4">
+            {/* Shipping Info */}
+            <div className="mb-6 pt-4 border-t border-border-light dark:border-border-dark">
+              <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark mb-1">
+                Estimated delivery: 3-5 business days
+              </p>
+              <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
+                Shipping included
+              </p>
+            </div>
+
+            {/* Total */}
+            <div className="border-t border-border-light dark:border-border-dark pt-4">
               <div className="flex justify-between items-center">
-                <span className="text-xl font-semibold">Total</span>
-                <span className="text-2xl font-bold text-blue-600">
+                <span className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark">Total</span>
+                <span className="text-2xl font-semibold text-accent">
                   ${totalPrice.toFixed(2)}
                 </span>
               </div>
@@ -560,6 +599,12 @@ export default function CheckoutForm() {
           </div>
         </div>
       </div>
+
+      {/* Order Confirmation Modal */}
+      <OrderConfirmation
+        isVisible={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+      />
     </div>
   );
 }
