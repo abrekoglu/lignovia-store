@@ -11,6 +11,7 @@ import { FilterChips } from "@/components/filters/FilterChip";
 import DateRangePicker from "@/components/filters/DateRangePicker";
 import { useToast } from "@/contexts/ToastContext";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
+import { formatPrice } from "@/utils/priceUtils";
 
 export default function AdminProducts() {
   const { data: session, status } = useSession();
@@ -498,7 +499,7 @@ export default function AdminProducts() {
       width: 120,
       render: (row) => (
         <span className="text-sm font-semibold text-accent">
-          ${row.price?.toFixed(2) || "0.00"}
+          {formatPrice(row.price)}
         </span>
       ),
     },

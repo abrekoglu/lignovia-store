@@ -6,6 +6,7 @@ import Link from "next/link";
 import Layout from "@/components/Layout";
 import ProductCard from "@/components/ProductCard";
 import SkeletonProductCard from "@/components/SkeletonProductCard";
+import { formatPrice, formatPriceAmount } from "@/utils/priceUtils";
 
 export default function CategoryPage({ category: initialCategory, error: initialError }) {
   const router = useRouter();
@@ -387,7 +388,7 @@ export default function CategoryPage({ category: initialCategory, error: initial
               </div>
               {category.filters?.priceRange && (
                 <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
-                  ${category.filters.priceRange.min?.toFixed(2)} - ${category.filters.priceRange.max?.toFixed(2)}
+                  {formatPriceAmount(category.filters.priceRange.min)} - {formatPriceAmount(category.filters.priceRange.max)}
                 </p>
               )}
             </div>

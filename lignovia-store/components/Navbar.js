@@ -5,6 +5,9 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import ThemeToggle from "./ThemeToggle";
 import useCartStore from "@/store/cartStore";
+import CategoryMenu from "./CategoryMenu";
+import CategoryMenuMobile from "./CategoryMenuMobile";
+import SearchSuggestions from "./SearchSuggestions";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -15,6 +18,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   
   const cartItems = useCartStore((state) => state.items);
   const cartItemCount = cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
@@ -112,10 +116,37 @@ export default function Navbar() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchModalOpen(false);
+      setShowSuggestions(false);
       setSearchQuery("");
     }
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+    setShowSuggestions(e.target.value.trim().length >= 2);
+  };
+
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+    if (searchQuery.trim().length >= 2) {
+      setShowSuggestions(true);
+    }
+  };
+
+  const handleSearchBlur = () => {
+    // Delay to allow click on suggestions
+    setTimeout(() => {
+      setIsSearchFocused(false);
+      setShowSuggestions(false);
+    }, 200);
+  };
+
+  const handleSuggestionSelect = () => {
+    setShowSuggestions(false);
+    setIsSearchModalOpen(false);
+    setSearchQuery("");
   };
 
   const handleLinkClick = () => {
@@ -152,8 +183,13 @@ export default function Navbar() {
               />
             </Link>
 
+            {/* Categories Menu - Desktop */}
+            <div className="hidden lg:block">
+              <CategoryMenu />
+            </div>
+
             {/* Search Bar - Center (Desktop Only) */}
-            <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
+            <div className="hidden lg:flex flex-1 max-w-2xl mx-8 relative">
               <form onSubmit={handleSearch} className="w-full">
                 <div
                   className={`
@@ -167,7 +203,7 @@ export default function Navbar() {
                 >
                   <button
                     type="submit"
-                    className="absolute left-4 p-2 text-accent hover:text-accent/80 transition-colors duration-200"
+                    className="absolute left-4 p-2 text-accent hover:text-accent/80 transition-colors duration-200 z-10"
                     aria-label="Search"
                   >
                     <svg
@@ -187,14 +223,21 @@ export default function Navbar() {
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
+                    onChange={handleSearchInputChange}
+                    onFocus={handleSearchFocus}
+                    onBlur={handleSearchBlur}
                     placeholder="Search products..."
                     className="w-full pl-12 pr-4 py-3 bg-transparent text-text-primary-light dark:text-text-primary-dark placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark focus:outline-none text-sm"
                   />
                 </div>
               </form>
+              {/* Search Suggestions Dropdown */}
+              <SearchSuggestions
+                query={searchQuery}
+                isOpen={showSuggestions && isSearchFocused}
+                onClose={() => setShowSuggestions(false)}
+                onSelect={handleSuggestionSelect}
+              />
             </div>
 
             {/* Right Actions */}
@@ -540,6 +583,15 @@ export default function Navbar() {
                   </svg>
                   Shop
                 </Link>
+                {/* Categories Menu - Mobile */}
+                <div className="border-b border-border-light dark:border-border-dark pb-2 mb-2">
+                  <div className="px-4 py-2 mb-2">
+                    <h3 className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark uppercase tracking-wide">
+                      Categories
+                    </h3>
+                  </div>
+                  <CategoryMenuMobile onCategoryClick={handleLinkClick} />
+                </div>
                 {session && (
                   <>
                     <Link
@@ -701,14 +753,25 @@ export default function Navbar() {
                   ref={searchInputRef}
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={handleSearchInputChange}
+                  onFocus={() => {
+                    if (searchQuery.trim().length >= 2) {
+                      setShowSuggestions(true);
+                    }
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => setShowSuggestions(false), 200);
+                  }}
                   placeholder="Search products..."
                   className="w-full pl-12 pr-4 py-3 bg-hover-light dark:bg-hover-dark border border-border-light dark:border-border-dark rounded-[12px] text-text-primary-light dark:text-text-primary-dark placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark focus:outline-none focus:ring-2 focus:ring-accent/30 text-sm"
                 />
                 <button
                   type="button"
-                  onClick={() => setIsSearchModalOpen(false)}
-                  className="absolute right-4 p-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-200"
+                  onClick={() => {
+                    setIsSearchModalOpen(false);
+                    setShowSuggestions(false);
+                  }}
+                  className="absolute right-4 p-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-200 z-10"
                   aria-label="Close search"
                 >
                   <svg
@@ -727,6 +790,17 @@ export default function Navbar() {
                 </button>
               </div>
             </form>
+            {/* Mobile Search Suggestions */}
+            {showSuggestions && (
+              <div className="relative mt-2">
+                <SearchSuggestions
+                  query={searchQuery}
+                  isOpen={showSuggestions}
+                  onClose={() => setShowSuggestions(false)}
+                  onSelect={handleSuggestionSelect}
+                />
+              </div>
+            )}
           </div>
         </>
       )}

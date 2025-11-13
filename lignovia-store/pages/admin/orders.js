@@ -12,6 +12,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import connectDB from "@/lib/mongodb";
 import Order from "@/models/Order";
+import { formatPrice } from "@/utils/priceUtils";
 
 export default function AdminOrders({ orders: initialOrders, error }) {
   const { data: session, status } = useSession();
@@ -710,7 +711,7 @@ export default function AdminOrders({ orders: initialOrders, error }) {
         order.status || "pending",
         getPaymentStatus(order),
         order.paymentMethod || "N/A",
-        `$${(order.total || 0).toFixed(2)}`,
+        formatPrice(order.total || 0),
         itemsCount.toString(),
       ];
     });
@@ -789,7 +790,7 @@ export default function AdminOrders({ orders: initialOrders, error }) {
       align: "right",
       render: (row) => (
         <span className="text-sm font-semibold text-accent whitespace-nowrap">
-          ${row.total?.toFixed(2) || "0.00"}
+          {formatPrice(row.total)}
         </span>
       ),
     },
@@ -1095,7 +1096,7 @@ export default function AdminOrders({ orders: initialOrders, error }) {
               </div>
             </div>
             <p className="text-3xl font-semibold text-text-primary-light dark:text-text-primary-dark mb-2">
-              ${totalRevenue.toFixed(2)}
+              {formatPrice(totalRevenue)}
             </p>
             <div className="flex items-center gap-2">
               <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark">All time</span>
@@ -1261,7 +1262,7 @@ export default function AdminOrders({ orders: initialOrders, error }) {
                     <div>
                       <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark block mb-1">Total Price</span>
                       <p className="text-lg font-semibold text-accent">
-                        ${selectedOrder.total?.toFixed(2) || "0.00"}
+                        {formatPrice(selectedOrder.total)}
                       </p>
                     </div>
                     <div>
@@ -1442,13 +1443,13 @@ export default function AdminOrders({ orders: initialOrders, error }) {
                                   </div>
                                 </td>
                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-text-primary-light dark:text-text-primary-dark">
-                                  ${product.price?.toFixed(2) || "0.00"}
+                                  {formatPrice(product.price)}
                                 </td>
                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-text-primary-light dark:text-text-primary-dark">
                                   {product.quantity || 0}
                                 </td>
                                 <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold text-text-primary-light dark:text-text-primary-dark text-right">
-                                  ${subtotal.toFixed(2)}
+                                  {formatPrice(subtotal)}
                                 </td>
                               </tr>
                             );
@@ -1465,7 +1466,7 @@ export default function AdminOrders({ orders: initialOrders, error }) {
                             Total:
                           </td>
                           <td className="px-4 py-3 text-right text-lg font-semibold text-accent">
-                            ${selectedOrder.total?.toFixed(2) || "0.00"}
+                            {formatPrice(selectedOrder.total)}
                           </td>
                         </tr>
                       </tbody>

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import useCartStore, { useCartTotalPrice } from "@/store/cartStore";
 import OrderConfirmation from "./OrderConfirmation";
+import { formatPrice } from "@/utils/priceUtils";
 
 export default function CheckoutForm() {
   const router = useRouter();
@@ -566,11 +567,11 @@ export default function CheckoutForm() {
                         {item.name || "Product"}
                       </p>
                       <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
-                        {item.quantity} × ${item.price?.toFixed(2)}
+                        {item.quantity} × {formatPrice(item.price)}
                       </p>
                     </div>
                     <p className="font-semibold text-text-primary-light dark:text-text-primary-dark whitespace-nowrap">
-                      ${itemTotal.toFixed(2)}
+                      {formatPrice(itemTotal)}
                     </p>
                   </div>
                 );
@@ -592,7 +593,7 @@ export default function CheckoutForm() {
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark">Total</span>
                 <span className="text-2xl font-semibold text-accent">
-                  ${totalPrice.toFixed(2)}
+                  {formatPrice(totalPrice)}
                 </span>
               </div>
             </div>

@@ -172,11 +172,10 @@ const ProductSchema = new mongoose.Schema({
   slug: {
     type: String,
     required: [true, 'Product slug is required'],
-    unique: true,
+    unique: true, // unique: true automatically creates an index, so we don't need index: true
     lowercase: true,
     trim: true,
     match: [/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be a valid URL-friendly string'],
-    index: true,
   },
   category: {
     type: String,
@@ -279,8 +278,7 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     trim: true,
     sparse: true,
-    unique: true,
-    index: true,
+    unique: true, // unique: true automatically creates an index, so we don't need index: true
   },
   barcode: {
     type: String,

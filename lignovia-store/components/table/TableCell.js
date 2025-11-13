@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { formatPrice } from "@/utils/priceUtils";
 
 /**
  * LIGNOVIA Table Cell Component
@@ -114,10 +115,9 @@ export default function TableCell({
 
     // Currency
     if (column.type === "currency" && cellValue !== null && cellValue !== undefined) {
-      const amount = typeof cellValue === "number" ? cellValue : parseFloat(cellValue);
       return (
         <span className="text-sm font-semibold text-accent">
-          ${amount.toFixed(2)}
+          {formatPrice(cellValue)}
         </span>
       );
     }

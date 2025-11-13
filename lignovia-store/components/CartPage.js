@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import useCartStore, { useCartTotalPrice } from "@/store/cartStore";
+import { formatPrice } from "@/utils/priceUtils";
 
 export default function CartPage() {
   const { items, removeFromCart, increaseQuantity, decreaseQuantity } = useCartStore();
@@ -77,7 +78,7 @@ export default function CartPage() {
                       {item.name || "Product Name"}
                     </h3>
                     <p className="text-lg font-semibold text-accent">
-                      ${item.price?.toFixed(2) || "0.00"}
+                      {formatPrice(item.price)}
                     </p>
                   </div>
 
@@ -127,7 +128,7 @@ export default function CartPage() {
                   <div className="text-right">
                     <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-1">Total</p>
                     <p className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark">
-                      ${itemTotal.toFixed(2)}
+                      {formatPrice(itemTotal)}
                     </p>
                   </div>
 
@@ -148,7 +149,7 @@ export default function CartPage() {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark">Total</h2>
               <p className="text-3xl font-semibold text-accent">
-                ${totalPrice.toFixed(2)}
+                {formatPrice(totalPrice)}
               </p>
             </div>
           </div>

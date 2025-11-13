@@ -1,6 +1,7 @@
 import connectDB from "@/lib/mongodb";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import { normalizeProductImages } from "@/utils/imageUtils";
 
 export default async function handler(req, res) {
   await connectDB();
@@ -43,21 +44,13 @@ export default async function handler(req, res) {
     // Return empty array here - frontend will fetch separately
     const relatedProducts = [];
 
+    // Normalize product images
+    const normalizedProduct = normalizeProductImages(product);
+    
     // Build image gallery (mainImage + images array)
-    const imageGallery = [];
-    if (product.mainImage) {
-      imageGallery.push(product.mainImage);
-    }
-    if (product.images && product.images.length > 0) {
-      product.images.forEach((img) => {
-        if (img && !imageGallery.includes(img)) {
-          imageGallery.push(img);
-        }
-      });
-    }
-    // Fallback to legacy image field if no gallery images
-    if (imageGallery.length === 0 && product.image) {
-      imageGallery.push(product.image);
+    const imageGallery = normalizedProduct.images || [];
+    if (imageGallery.length === 0 && normalizedProduct.mainImage) {
+      imageGallery.push(normalizedProduct.mainImage);
     }
 
     // Build technical specifications object
@@ -77,7 +70,7 @@ export default async function handler(req, res) {
 
     // Build response
     const productData = {
-      ...product,
+      ...normalizedProduct,
       categoryInfo,
       relatedProducts,
       imageGallery,

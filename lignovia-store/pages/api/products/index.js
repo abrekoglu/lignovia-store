@@ -1,5 +1,6 @@
 import connectDB from "@/lib/mongodb";
 import Product from "@/models/Product";
+import { normalizeProductImages } from "@/utils/imageUtils";
 
 export default async function handler(req, res) {
   await connectDB();
@@ -15,11 +16,8 @@ export default async function handler(req, res) {
         .sort({ createdAt: -1 })
         .lean();
 
-      // Ensure image field is set for backward compatibility
-      const productsWithImages = products.map((product) => ({
-        ...product,
-        image: product.image || product.mainImage || (product.images && product.images[0]) || "",
-      }));
+      // Normalize images for all products
+      const productsWithImages = products.map((product) => normalizeProductImages(product));
 
       return res.status(200).json({ success: true, data: productsWithImages });
     } catch (error) {

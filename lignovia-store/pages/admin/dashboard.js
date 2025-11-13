@@ -10,6 +10,7 @@ import SkeletonChart from "@/components/SkeletonChart";
 import connectDB from "@/lib/mongodb";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
+import { formatPrice } from "@/utils/priceUtils";
 
 export default function AdminDashboard({ 
   stats, 
@@ -157,7 +158,7 @@ export default function AdminDashboard({
                       </div>
                     </div>
                     <p className="text-3xl font-semibold text-text-primary-light dark:text-text-primary-dark mb-2">
-                      ${stats?.totalSales?.toFixed(2) || "0.00"}
+                      {formatPrice(stats?.totalSales || 0)}
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-success-light dark:text-success-dark">
@@ -320,7 +321,7 @@ export default function AdminDashboard({
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-right">
                                 <span className="text-sm font-semibold text-accent">
-                                  ${order.total?.toFixed(2) || "0.00"}
+                                  {formatPrice(order.total)}
                                 </span>
                               </td>
                             </tr>

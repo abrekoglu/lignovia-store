@@ -697,7 +697,10 @@ export default function AdminInventory({ products, error }) {
               </div>
             </div>
             <div className="text-3xl font-semibold text-accent">
-              ${totalStockValue.toFixed(2)}
+              {(() => {
+                const { formatPrice } = require("@/utils/priceUtils");
+                return formatPrice(totalStockValue);
+              })()}
             </div>
           </div>
         </div>

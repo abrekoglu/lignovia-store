@@ -3,6 +3,8 @@ import Image from "next/image";
 import { useState } from "react";
 import useCartStore from "@/store/cartStore";
 import CartToast from "./CartToast";
+import { getProductImage, getProductHoverImage } from "@/utils/imageUtils";
+import { formatPrice, hasDiscount, getCompareAtPrice } from "@/utils/priceUtils";
 
 export default function ProductCard({ product, onAddToCart }) {
   const { addToCart } = useCartStore();
@@ -91,6 +93,10 @@ export default function ProductCard({ product, onAddToCart }) {
   // Use slug first, fallback to ID if absolutely necessary (though slug should always exist)
   const productSlug = product?.slug || String(product?._id || product?.id || "product-not-found");
   const productHref = `/product/${productSlug}`;
+  
+  // Get normalized images
+  const productImage = getProductImage(product);
+  const productHoverImage = getProductHoverImage(product);
 
   return (
     <div className="card-hover overflow-hidden p-0 flex flex-col h-full relative">
@@ -104,30 +110,49 @@ export default function ProductCard({ product, onAddToCart }) {
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
-          {product?.image ? (
+          {productImage ? (
             <>
               <Image
-                src={product.image}
-                alt={product.name || "Product"}
+                src={productImage}
+                alt={product?.name || "Product"}
                 fill
                 className={`object-cover transition-opacity duration-300 ${
-                  hovered && product?.hoverImage ? "opacity-0" : "opacity-100"
+                  hovered && productHoverImage ? "opacity-0" : "opacity-100"
                 }`}
+                unoptimized={productImage.startsWith('http') || productImage.startsWith('//')}
               />
-              {product?.hoverImage && (
+              {productHoverImage && (
                 <Image
-                  src={product.hoverImage}
-                  alt={`${product.name || "Product"} - View 2`}
+                  src={productHoverImage}
+                  alt={`${product?.name || "Product"} - View 2`}
                   fill
                   className={`object-cover transition-opacity duration-300 ${
                     hovered ? "opacity-100" : "opacity-0"
                   }`}
+                  unoptimized={productHoverImage.startsWith('http') || productHoverImage.startsWith('//')}
                 />
               )}
             </>
           ) : (
-            <div className="flex items-center justify-center h-full text-text-secondary-light dark:text-text-secondary-dark">
-              No Image
+            <div className="flex items-center justify-center h-full bg-gradient-to-br from-surface-light to-surface-dark dark:from-surface-dark dark:to-surface-light">
+              <div className="text-center p-4">
+                <svg
+                  className="w-16 h-16 mx-auto mb-2 text-text-secondary-light dark:text-text-secondary-dark opacity-40"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark opacity-60">
+                  No Image Available
+                </p>
+              </div>
             </div>
           )}
         </div>
@@ -152,9 +177,22 @@ export default function ProductCard({ product, onAddToCart }) {
 
         {/* Price + Stock Badge Row - Fixed Position */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
-          <p className="text-xl font-semibold text-accent">
-            ${product?.price?.toFixed(2) || "0.00"}
-          </p>
+          <div className="flex flex-col gap-1">
+            {hasDiscount(product) ? (
+              <>
+                <p className="text-xl font-semibold text-accent">
+                  {formatPrice(getDisplayPrice(product))}
+                </p>
+                <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark line-through">
+                  {formatPrice(getCompareAtPrice(product))}
+                </p>
+              </>
+            ) : (
+              <p className="text-xl font-semibold text-accent">
+                {formatPrice(product?.price)}
+              </p>
+            )}
+          </div>
           {/* Stock Badge */}
           {isOutOfStock ? (
             <span className="badge bg-error-light dark:bg-error-dark text-white text-xs">

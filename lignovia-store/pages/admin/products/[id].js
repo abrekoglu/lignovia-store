@@ -7,6 +7,7 @@ import AdminLayout from "@/components/AdminLayout";
 import CategoryDropdown from "@/components/CategoryDropdown";
 import { useToast } from "@/contexts/ToastContext";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
+import { formatPrice } from "@/utils/priceUtils";
 
 /**
  * LIGNOVIA Product Create/Edit Page
@@ -890,10 +891,10 @@ function PricingTab({ formData, onChange }) {
             {formData.compareAtPrice && parseFloat(formData.compareAtPrice) > parseFloat(formData.price) ? (
               <>
                 <span className="text-2xl font-medium text-text-primary-light dark:text-text-primary-dark">
-                  {formData.currency} {parseFloat(formData.price).toFixed(2)}
+                  {formatPrice(parseFloat(formData.price || 0))}
                 </span>
                 <span className="text-lg text-text-secondary-light dark:text-text-secondary-dark line-through">
-                  {formData.currency} {parseFloat(formData.compareAtPrice).toFixed(2)}
+                  {formatPrice(parseFloat(formData.compareAtPrice || 0))}
                 </span>
                 <span className="px-3 py-1 rounded-full bg-accent/20 text-accent text-body-sm font-medium">
                   -{discountPercentage}%
@@ -901,7 +902,7 @@ function PricingTab({ formData, onChange }) {
               </>
             ) : (
               <span className="text-2xl font-medium text-text-primary-light dark:text-text-primary-dark">
-                {formData.currency} {parseFloat(formData.price).toFixed(2)}
+                {formatPrice(parseFloat(formData.price || 0))}
               </span>
             )}
           </div>

@@ -132,11 +132,8 @@ export async function getServerSideProps(context) {
     }
 
     // Products are already filtered by API (published, public, inStock)
-    // Just ensure image field exists for ProductCard
-    const allProducts = (data.data || []).map((product) => ({
-      ...product,
-      image: product.image || product.mainImage || (product.images && product.images[0]) || "",
-    }));
+    // Images are already normalized by API, no need to normalize again
+    const allProducts = data.data || [];
 
     return {
       props: {

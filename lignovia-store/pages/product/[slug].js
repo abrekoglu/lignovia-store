@@ -8,6 +8,8 @@ import ProductCard from "@/components/ProductCard";
 import SkeletonProductCard from "@/components/SkeletonProductCard";
 import useCartStore from "@/store/cartStore";
 import CartToast from "@/components/CartToast";
+import { getProductImages, getProductImage, isExternalUrl } from "@/utils/imageUtils";
+import { formatPrice, hasDiscount, getCompareAtPrice, calculateDiscountPercentage } from "@/utils/priceUtils";
 
 export default function ProductDetail({ product: initialProduct, error }) {
   const router = useRouter();
@@ -120,7 +122,7 @@ export default function ProductDetail({ product: initialProduct, error }) {
       id: productId,
       name: product?.name,
       price: product?.price,
-      image: product?.mainImage || product?.image || product?.imageGallery?.[0],
+      image: getProductImage(product),
       slug: product?.slug,
       description: product?.shortDescription || product?.description,
       stock: stock,
@@ -135,26 +137,12 @@ export default function ProductDetail({ product: initialProduct, error }) {
     setQuantity(1);
   };
 
-  // Build image gallery from available sources
-  const buildImageGallery = () => {
-    if (product?.imageGallery && product.imageGallery.length > 0) {
-      return product.imageGallery;
-    }
-    const gallery = [];
-    if (product?.mainImage) gallery.push(product.mainImage);
-    if (product?.images && product.images.length > 0) {
-      product.images.forEach(img => {
-        if (img && !gallery.includes(img)) gallery.push(img);
-      });
-    }
-    if (product?.image && !gallery.includes(product.image)) {
-      gallery.push(product.image);
-    }
-    return gallery;
-  };
-
-  const imageGallery = buildImageGallery();
-  const currentImage = imageGallery[selectedImageIndex] || product?.mainImage || product?.image;
+  // Build image gallery using utility function
+  const imageGallery = product?.imageGallery && product.imageGallery.length > 0 
+    ? product.imageGallery 
+    : getProductImages(product);
+  
+  const currentImage = imageGallery[selectedImageIndex] || getProductImage(product);
 
   if (loading) {
     return (
@@ -198,9 +186,9 @@ export default function ProductDetail({ product: initialProduct, error }) {
     );
   }
 
-  const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
-  const discountPercent = hasDiscount
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+  const productHasDiscount = hasDiscount(product);
+  const discountPercent = productHasDiscount
+    ? calculateDiscountPercentage(getCompareAtPrice(product), getDisplayPrice(product))
     : 0;
 
   return (
@@ -273,13 +261,31 @@ export default function ProductDetail({ product: initialProduct, error }) {
                   imageZoomed ? "scale-110" : "scale-100"
                 }`}
                 priority
+                unoptimized={isExternalUrl(currentImage)}
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-text-secondary-light dark:text-text-secondary-dark">
-                No Image
+              <div className="flex items-center justify-center h-full bg-gradient-to-br from-surface-light to-surface-dark dark:from-surface-dark dark:to-surface-light">
+                <div className="text-center p-4">
+                  <svg
+                    className="w-24 h-24 mx-auto mb-4 text-text-secondary-light dark:text-text-secondary-dark opacity-40"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark opacity-60">
+                    No Image Available
+                  </p>
+                </div>
               </div>
             )}
-            {hasDiscount && (
+            {productHasDiscount && discountPercent > 0 && (
               <div className="absolute top-4 left-4 px-3 py-1.5 rounded-[8px] bg-accent text-white text-sm font-semibold shadow-soft">
                 -{discountPercent}%
               </div>
@@ -304,6 +310,7 @@ export default function ProductDetail({ product: initialProduct, error }) {
                     alt={`${product.name} - View ${index + 1}`}
                     fill
                     className="object-cover"
+                    unoptimized={isExternalUrl(image)}
                   />
                 </button>
               ))}
@@ -329,13 +336,20 @@ export default function ProductDetail({ product: initialProduct, error }) {
           </div>
 
           {/* Price */}
-          <div className="flex items-center gap-4">
-            <span className="text-3xl font-semibold text-accent">
-              {product.currency || "TRY"} {product.price?.toFixed(2) || "0.00"}
-            </span>
-            {hasDiscount && (
-              <span className="text-xl text-text-secondary-light dark:text-text-secondary-dark line-through">
-                {product.currency || "TRY"} {product.compareAtPrice?.toFixed(2)}
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex flex-col gap-1">
+              <span className="text-3xl font-semibold text-accent">
+                {formatPrice(product.price)}
+              </span>
+              {productHasDiscount && (
+                <span className="text-xl text-text-secondary-light dark:text-text-secondary-dark line-through">
+                  {formatPrice(getCompareAtPrice(product))}
+                </span>
+              )}
+            </div>
+            {productHasDiscount && discountPercent > 0 && (
+              <span className="px-3 py-1.5 rounded-full bg-accent/20 text-accent text-sm font-semibold">
+                -{discountPercent}%
               </span>
             )}
           </div>

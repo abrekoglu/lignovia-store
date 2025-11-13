@@ -7,6 +7,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import connectDB from "@/lib/mongodb";
 import Order from "@/models/Order";
 import mongoose from "mongoose";
+import { formatPrice } from "@/utils/priceUtils";
 
 export default function MyOrders({ orders, error }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -142,7 +143,7 @@ export default function MyOrders({ orders, error }) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <span className="text-lg font-semibold text-accent">
-                            ${order.total?.toFixed(2) || "0.00"}
+                            {formatPrice(order.total)}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -313,7 +314,7 @@ export default function MyOrders({ orders, error }) {
                         Total Amount
                       </span>
                       <p className="text-lg font-semibold text-accent">
-                        ${selectedOrder.total?.toFixed(2) || "0.00"}
+                        {formatPrice(selectedOrder.total)}
                       </p>
                     </div>
                   </div>
@@ -338,12 +339,12 @@ export default function MyOrders({ orders, error }) {
                                 Product ID: {product.product?.substring(0, 12) || "N/A"}
                               </p>
                               <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
-                                Quantity: {product.quantity || 0} × ${product.price?.toFixed(2) || "0.00"}
+                                Quantity: {product.quantity || 0} × {formatPrice(product.price)}
                               </p>
                             </div>
                             <div className="text-right">
                               <p className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">
-                                ${subtotal.toFixed(2)}
+                                {formatPrice(subtotal)}
                               </p>
                             </div>
                           </div>

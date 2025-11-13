@@ -1,6 +1,7 @@
 import connectDB from "@/lib/mongodb";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
+import { normalizeProductImages } from "@/utils/imageUtils";
 
 export default async function handler(req, res) {
   await connectDB();
@@ -149,11 +150,8 @@ export default async function handler(req, res) {
     const minPriceAvailable = priceRange.length > 0 ? priceRange[0].minPrice : 0;
     const maxPriceAvailable = priceRange.length > 0 ? priceRange[0].maxPrice : 0;
 
-    // Ensure image field for backward compatibility
-    const productsWithImages = products.map((product) => ({
-      ...product,
-      image: product.image || product.mainImage || (product.images && product.images[0]) || "",
-    }));
+    // Normalize images for all products
+    const productsWithImages = products.map((product) => normalizeProductImages(product));
 
     // Build response
     const categoryData = {

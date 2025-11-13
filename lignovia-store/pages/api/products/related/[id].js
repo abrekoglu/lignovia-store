@@ -1,6 +1,7 @@
 import connectDB from "@/lib/mongodb";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import { normalizeProductImages } from "@/utils/imageUtils";
 
 export default async function handler(req, res) {
   await connectDB();
@@ -178,7 +179,7 @@ export default async function handler(req, res) {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
-    // Limit to requested number and ensure image field and slug
+    // Limit to requested number and normalize images and slug
     const finalProducts = relatedProducts.slice(0, limit).map((product) => {
       // Remove relevanceScore from response
       const { relevanceScore, ...productData } = product;
@@ -203,17 +204,13 @@ export default async function handler(req, res) {
         }
       }
       
-      // Ensure image field for backward compatibility
-      const finalProduct = {
+      // Normalize product images and ensure slug
+      const normalizedProduct = normalizeProductImages({
         ...productData,
-        image: productData.image || productData.mainImage || (productData.images && productData.images[0]) || "",
-        // Get second image for hover effect
-        hoverImage: productData.images && productData.images.length > 1 ? productData.images[1] : null,
-        // Ensure slug is always a valid string (critical for navigation)
         slug: String(finalSlug).trim() || String(productData._id),
-      };
+      });
       
-      return finalProduct;
+      return normalizedProduct;
     });
 
     return res.status(200).json({

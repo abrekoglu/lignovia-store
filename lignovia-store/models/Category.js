@@ -81,7 +81,7 @@ const CategorySchema = new mongoose.Schema({
 });
 
 // Indexes for performance
-CategorySchema.index({ slug: 1 });
+// Note: slug index is automatically created by unique: true, so we don't need to define it again
 CategorySchema.index({ parentCategory: 1 });
 CategorySchema.index({ visibility: 1 });
 CategorySchema.index({ sortOrder: 1 });
