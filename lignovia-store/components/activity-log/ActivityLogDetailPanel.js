@@ -283,3 +283,4 @@ export default function ActivityLogDetailPanel({ isOpen, onClose, activity }) {
   );
 }
 
+

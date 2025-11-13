@@ -416,3 +416,4 @@ if (require.main === module) {
 
 export default seedProducts;
 
+

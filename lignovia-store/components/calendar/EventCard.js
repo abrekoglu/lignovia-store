@@ -111,3 +111,4 @@ export default function EventCard({ event, onClick, compact = false }) {
   );
 }
 
+

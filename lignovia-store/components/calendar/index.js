@@ -9,3 +9,4 @@ export { default as EventCard } from "./EventCard";
 export { default as EventDetailsModal } from "./EventDetailsModal";
 export { default as AddEventModal } from "./AddEventModal";
 
+

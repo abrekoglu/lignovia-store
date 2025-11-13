@@ -526,3 +526,4 @@ For questions or issues with the typography system, refer to:
 - Tailwind config: `tailwind.config.js`
 - Documentation: `TYPOGRAPHY_SYSTEM.md`
 
+

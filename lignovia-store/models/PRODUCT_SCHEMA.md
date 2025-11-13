@@ -448,3 +448,4 @@ For questions or issues with the Product schema, refer to:
 - Admin panel: `pages/admin/products.js`
 - Storefront: `pages/shop.js`, `pages/product/[slug].js`
 
+
