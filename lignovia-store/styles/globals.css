@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -39,6 +39,51 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
+  /* Global Container System */
+  .container-lignovia {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-lignovia {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container-lignovia {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-lignovia {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container-lignovia {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .container-lignovia {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -47,12 +92,101 @@
   body {
     background-color: var(--bg);
     color: var(--text-primary);
-    font-family: 'Poppins', 'Raleway', 'Montserrat', system-ui, sans-serif;
+    font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: 0.02em;
-    line-height: 1.7;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    letter-spacing: -0.011em;
+    line-height: 1.65;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  /* Typography Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
     font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  h4 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+  }
+
+  h5 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  h6 {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: -0.011em;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  /* Small Text / Captions */
+  small, .text-small {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+  }
+
+  /* Button Text */
+  button, .btn {
+    font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+  }
+
+  /* Overline / Section Labels */
+  .overline, .text-overline {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    opacity: 0.8;
   }
 
   * {
@@ -115,37 +249,163 @@
 }
 
 @layer components {
+  /* Typography Utility Classes */
+  .text-heading-1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+  }
+
+  .text-heading-2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+  }
+
+  .text-heading-3 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .text-heading-4 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: var(--text-primary);
+  }
+
+  .text-heading-5 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  .text-heading-6 {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+    color: var(--text-primary);
+  }
+
+  .text-body {
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: -0.011em;
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+
+  .text-body-lg {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    letter-spacing: -0.012em;
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+
+  .text-body-sm {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .text-caption {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .text-small {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .text-overline {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    opacity: 0.8;
+  }
+
+  .text-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  .text-button {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+  }
+
   /* Button Styles */
   .btn-primary {
-    @apply bg-accent text-white px-6 py-2.5 rounded-soft font-semibold;
+    @apply bg-accent text-white px-6 py-2.5 rounded-soft;
     @apply hover:opacity-90 transition-all duration-smooth;
     @apply shadow-soft hover:shadow-soft-lg;
     @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
   }
 
   .btn-secondary {
     @apply bg-surface-light dark:bg-surface-dark text-text-primary-light dark:text-text-primary-dark;
-    @apply border border-border-light dark:border-border-dark px-6 py-2.5 rounded-soft font-semibold;
+    @apply border border-border-light dark:border-border-dark px-6 py-2.5 rounded-soft;
     @apply hover:bg-hover-light dark:hover:bg-hover-dark transition-all duration-smooth;
     @apply shadow-soft dark:shadow-soft-dark hover:shadow-soft-lg dark:hover:shadow-soft-lg-dark;
     @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-surface-dark;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
   }
 
   .btn-text {
-    @apply text-text-primary-light dark:text-text-primary-dark font-semibold;
+    @apply text-text-primary-light dark:text-text-primary-dark;
     @apply hover:text-accent transition-colors duration-smooth;
     @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-surface-dark rounded-soft;
     font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
   }
 
   .btn-ghost {
-    @apply text-text-primary-light dark:text-text-primary-dark font-semibold;
+    @apply text-text-primary-light dark:text-text-primary-dark;
     @apply hover:bg-hover-light dark:hover:bg-hover-dark transition-all duration-smooth;
     @apply px-4 py-2 rounded-soft;
     @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-surface-dark;
     font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
   }
 
   /* Card Styles */
@@ -318,6 +578,42 @@
     @apply px-3 py-1 rounded-full text-xs font-semibold;
     @apply inline-flex items-center;
   }
+
+  /* Checkbox Styles */
+  input[type="checkbox"] {
+    @apply w-5 h-5 rounded-[6px];
+    @apply border border-border-light dark:border-border-dark;
+    @apply bg-surface-light dark:bg-surface-dark;
+    @apply text-accent;
+    @apply focus:ring-2 focus:ring-accent/30 focus:ring-offset-0;
+    @apply cursor-pointer;
+    @apply transition-all duration-200;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+  }
+
+  input[type="checkbox"]:checked {
+    @apply bg-accent border-accent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FFFFFF' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M4.5 12.75l6 6 9-13.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.875rem;
+  }
+
+  input[type="checkbox"]:hover:not(:disabled) {
+    @apply border-accent/70 bg-hover-light dark:bg-hover-dark;
+  }
+
+  input[type="checkbox"]:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  input[type="checkbox"]:focus {
+    @apply outline-none;
+    box-shadow: 0 0 0 3px rgba(200, 169, 139, 0.1);
+  }
 }
 
 /* Toast Animation */
@@ -334,4 +630,259 @@
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
+}
+
+/* Tab Content Animation */
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content-enter {
+  animation: tabFadeIn 0.2s ease-out;
+}
+
+@keyframes footerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-fade-in {
+  animation: footerFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalBackdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+
+/* Modal Animation Classes */
+.modal-backdrop-enter {
+  animation: modalBackdropFadeIn 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-backdrop-exit {
+  animation: modalBackdropFadeOut 200ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+.modal-content-enter {
+  animation: fadeInScale 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content-exit {
+  animation: fadeOutScale 200ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+@media (max-width: 768px) {
+  .modal-content-enter {
+    animation: modalSlideUp 280ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  
+  .modal-content-exit {
+    animation: modalSlideDown 220ms cubic-bezier(0.4, 0, 1, 1) !important;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Mobile Menu Slide Animations */
+.modal-content-enter-mobile {
+  animation: slideInRight 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content-exit-mobile {
+  animation: slideOutRight 250ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Skeleton Loading Styles */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    #EFE8E2 0%,
+    #F5F2EF 25%,
+    #E9E3DD 50%,
+    #F5F2EF 75%,
+    #EFE8E2 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    #2E2722 0%,
+    #332C27 25%,
+    #3A322D 50%,
+    #332C27 75%,
+    #2E2722 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Table Styles */
+@layer components {
+  /* Sticky Table Header Shadow */
+  .table-header-sticky {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .table-header-sticky {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Table Row Hover Transition */
+  .table-row {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Table Cell Truncate */
+  .table-cell-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Table Resize Handle */
+  .table-resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: col-resize;
+    user-select: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .table-resize-handle:hover {
+    background-color: rgba(200, 169, 139, 0.5);
+  }
+
+  .table-resize-handle.active {
+    background-color: rgba(200, 169, 139, 0.8);
+  }
+
+  /* Custom Scrollbar for Table */
+  .table-scrollbar::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  .table-scrollbar::-webkit-scrollbar-track {
+    background: #F5F2EF;
+    border-radius: 4px;
+  }
+
+  .dark .table-scrollbar::-webkit-scrollbar-track {
+    background: #29231F;
+  }
+
+  .table-scrollbar::-webkit-scrollbar-thumb {
+    background: #C8A98B;
+    border-radius: 4px;
+  }
+
+  .table-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #B89A7A;
+  }
 }

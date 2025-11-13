@@ -4,6 +4,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import AdminLayout from "@/components/AdminLayout";
+import SkeletonCard from "@/components/SkeletonCard";
+import SkeletonTable from "@/components/SkeletonTable";
+import SkeletonChart from "@/components/SkeletonChart";
 import connectDB from "@/lib/mongodb";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
@@ -39,8 +42,26 @@ export default function AdminDashboard({
   if (status === "loading") {
     return (
       <AdminLayout>
-        <div className="text-center py-12">
-          <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading...</p>
+        <Head>
+          <title>Dashboard - LIGNOVIA Admin</title>
+        </Head>
+        <div className="mb-8 pb-6 border-b border-border-light dark:border-border-dark">
+          <h1 className="text-3xl lg:text-4xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight mb-2">
+            Dashboard
+          </h1>
+          <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+            Welcome back
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <SkeletonCard count={4} />
+        </div>
+        <div className="mb-8">
+          <SkeletonTable rows={5} columns={5} />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <SkeletonChart type="line" height="300px" />
+          <SkeletonChart type="bar" height="300px" />
         </div>
       </AdminLayout>
     );
@@ -88,7 +109,7 @@ export default function AdminDashboard({
       </Head>
 
       {/* Page Header */}
-      <div className="mb-8">
+      <div className="mb-8 pb-6 border-b border-border-light dark:border-border-dark">
         <h1 className="text-3xl lg:text-4xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight mb-2">
           Dashboard
         </h1>
@@ -101,6 +122,24 @@ export default function AdminDashboard({
         <div className="card border-error-light dark:border-error-dark bg-error-light/10 dark:bg-error-dark/10 p-4 mb-6">
           <p className="text-error-light dark:text-error-dark text-sm font-medium">Error loading dashboard: {error}</p>
         </div>
+      ) : !stats ? (
+        <>
+          {/* Loading State - Overview Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <SkeletonCard count={4} />
+          </div>
+
+          {/* Loading State - Recent Orders */}
+          <div className="mb-8">
+            <SkeletonTable rows={5} columns={5} />
+          </div>
+
+          {/* Loading State - Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <SkeletonChart type="line" height="300px" />
+            <SkeletonChart type="bar" height="300px" />
+          </div>
+        </>
       ) : (
         <>
           {/* Overview Cards */}
@@ -111,7 +150,7 @@ export default function AdminDashboard({
                       <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark">
                         Total Sales
                       </span>
-                      <div className="p-2 bg-accent/20 rounded-soft">
+                      <div className="w-10 h-10 rounded-[12px] bg-accent/20 dark:bg-accent/30 flex items-center justify-center">
                         <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -134,7 +173,7 @@ export default function AdminDashboard({
                       <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark">
                         Orders Today
                       </span>
-                      <div className="p-2 bg-accent/20 rounded-soft">
+                      <div className="w-10 h-10 rounded-[12px] bg-accent/20 dark:bg-accent/30 flex items-center justify-center">
                         <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.25 10.5a.75.75 0 01-.75.75h1.5a.75.75 0 00.75-.75V8.25a.75.75 0 00-.75-.75H7.5a.75.75 0 00-.75.75v2.25zm6 0a.75.75 0 01-.75-.75V8.25a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v1.5c0 .414.336.75.75.75h1.5a.75.75 0 01.75-.75z" />
                         </svg>
@@ -157,7 +196,7 @@ export default function AdminDashboard({
                       <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark">
                         Active Products
                       </span>
-                      <div className="p-2 bg-accent/20 rounded-soft">
+                      <div className="w-10 h-10 rounded-[12px] bg-accent/20 dark:bg-accent/30 flex items-center justify-center">
                         <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                         </svg>
@@ -177,7 +216,7 @@ export default function AdminDashboard({
                       <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark">
                         Returning Customers
                       </span>
-                      <div className="p-2 bg-accent/20 rounded-soft">
+                      <div className="w-10 h-10 rounded-[12px] bg-accent/20 dark:bg-accent/30 flex items-center justify-center">
                         <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                         </svg>
@@ -207,8 +246,8 @@ export default function AdminDashboard({
                           {lowStockProducts.length} product{lowStockProducts.length !== 1 ? "s" : ""} {lowStockProducts.length === 1 ? "has" : "have"} low stock or are out of stock
                         </p>
                       </div>
-                      <Link href="/admin/products" className="btn-text text-sm">
-                        View Products
+                      <Link href="/admin/inventory" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors duration-200">
+                        View Inventory
                       </Link>
                     </div>
             </div>
@@ -220,7 +259,7 @@ export default function AdminDashboard({
                     <h2 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
                       Recent Orders
                     </h2>
-                    <Link href="/admin/orders" className="btn-text text-sm">
+                    <Link href="/admin/orders" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors duration-200">
                       View All Orders
                     </Link>
                   </div>
@@ -311,11 +350,11 @@ export default function AdminDashboard({
                         {lowStockProducts.slice(0, 6).map((product) => (
                           <div
                             key={product._id}
-                            className="bg-hover-light dark:bg-hover-dark rounded-softer p-4 border border-border-light dark:border-border-dark"
+                            className="bg-hover-light dark:bg-hover-dark rounded-[14px] p-4 border border-border-light dark:border-border-dark"
                           >
                             <div className="flex items-start gap-4">
                               {/* Product Image */}
-                              <div className="flex-shrink-0 w-16 h-16 rounded-soft border border-border-light dark:border-border-dark overflow-hidden bg-surface-light dark:bg-surface-dark">
+                              <div className="flex-shrink-0 w-16 h-16 rounded-[12px] border border-border-light dark:border-border-dark overflow-hidden bg-surface-light dark:bg-surface-dark">
                                 {product.image ? (
                                   <img
                                     src={product.image}
@@ -344,7 +383,7 @@ export default function AdminDashboard({
                                 </p>
                                 <Link
                                   href={`/admin/products`}
-                                  className="btn-text text-xs"
+                                  className="text-xs font-medium text-accent hover:text-accent/80 transition-colors duration-200"
                                 >
                                   View Product
                                 </Link>
@@ -361,25 +400,49 @@ export default function AdminDashboard({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                   {/* Sales Over Time */}
                   <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark mb-6 tracking-tight">
-                      Sales Over Time
-                    </h3>
-                    <div className="h-64 flex items-center justify-center bg-hover-light dark:bg-hover-dark rounded-soft border border-border-light dark:border-border-dark">
-                      <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                        Chart visualization coming soon
-                      </p>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-[12px] bg-accent/20 dark:bg-accent/30 flex items-center justify-center">
+                        <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+                        Sales Over Time
+                      </h3>
+                    </div>
+                    <div className="h-64 flex items-center justify-center bg-hover-light dark:bg-hover-dark rounded-[12px] border border-border-light dark:border-border-dark">
+                      <div className="text-center">
+                        <svg className="w-16 h-16 text-accent/50 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                        </svg>
+                        <p className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                          Chart visualization coming soon
+                        </p>
+                      </div>
                     </div>
                   </div>
 
                   {/* Top Categories */}
                   <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark mb-6 tracking-tight">
-                      Top Categories
-                    </h3>
-                    <div className="h-64 flex items-center justify-center bg-hover-light dark:bg-hover-dark rounded-soft border border-border-light dark:border-border-dark">
-                      <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                        Chart visualization coming soon
-                      </p>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-[12px] bg-accent/20 dark:bg-accent/30 flex items-center justify-center">
+                        <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h4.125M8.25 8.25l3 3m0 0l3-3m-3 3v6" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+                        Top Categories
+                      </h3>
+                    </div>
+                    <div className="h-64 flex items-center justify-center bg-hover-light dark:bg-hover-dark rounded-[12px] border border-border-light dark:border-border-dark">
+                      <div className="text-center">
+                        <svg className="w-16 h-16 text-accent/50 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h4.125M8.25 8.25l3 3m0 0l3-3m-3 3v6" />
+                        </svg>
+                        <p className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                          Chart visualization coming soon
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Image from "next/image";
+import AuthLayout from "@/components/AuthLayout";
 
 export default function Login() {
   const { data: session, status } = useSession();
@@ -26,9 +26,11 @@ export default function Login() {
   // Show loading while checking session
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex items-center justify-center">
-        <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading...</p>
-      </div>
+      <AuthLayout brandMessage="Welcome back to your crafted workspace.">
+        <div className="text-center">
+          <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading...</p>
+        </div>
+      </AuthLayout>
     );
   }
 
@@ -84,29 +86,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex items-center justify-center px-4 py-12">
+    <>
       <Head>
         <title>Login - LIGNOVIA</title>
         <meta name="description" content="Login to your LIGNOVIA account" />
       </Head>
 
-      {/* Form Card */}
-      <div className="w-full max-w-[460px] card p-8 lg:p-10 animate-fade-in">
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <Image
-            src="/images/logo/logo.png"
-            alt="LIGNOVIA"
-            width={200}
-            height={48}
-            className="h-12 w-auto"
-            priority
-          />
-        </div>
+      <AuthLayout brandMessage="Welcome back to your crafted workspace.">
+        {/* Title */}
+        <h1 className="text-2xl lg:text-3xl font-semibold text-text-primary-light dark:text-text-primary-dark text-center mb-3">
+          Sign In
+        </h1>
 
-        {/* Tagline */}
-        <p className="text-center text-sm text-text-secondary-light dark:text-text-secondary-dark mb-8">
-          Welcome back to your crafted workspace.
+        {/* Subtitle */}
+        <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark text-center mb-8">
+          Enter your credentials to continue
         </p>
 
         {/* Error Message */}
@@ -215,27 +209,11 @@ export default function Login() {
               href="/register"
               className="text-accent hover:underline font-medium transition-colors duration-200"
             >
-              Create one
+              Register
             </Link>
           </p>
         </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-      `}</style>
-    </div>
+      </AuthLayout>
+    </>
   );
 }

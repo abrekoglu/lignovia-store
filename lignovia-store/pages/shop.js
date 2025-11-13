@@ -1,31 +1,105 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import ProductCard from "@/components/ProductCard";
 
-export default function Shop({ products, error }) {
+export default function Shop({ products: initialProducts, error, searchQuery: initialSearchQuery }) {
+  const router = useRouter();
+  const [filteredProducts, setFilteredProducts] = useState(initialProducts || []);
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
+
+  // Filter products based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredProducts(initialProducts || []);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    const filtered = (initialProducts || []).filter((product) => {
+      const matchesName = product.name?.toLowerCase().includes(query);
+      const matchesDescription = product.description?.toLowerCase().includes(query);
+      const matchesSlug = product.slug?.toLowerCase().includes(query);
+      return matchesName || matchesDescription || matchesSlug;
+    });
+
+    setFilteredProducts(filtered);
+  }, [searchQuery, initialProducts]);
+
+  // Update search query when router query changes
+  useEffect(() => {
+    if (router.query.search) {
+      setSearchQuery(router.query.search);
+    } else {
+      setSearchQuery("");
+    }
+  }, [router.query.search]);
+
   return (
     <Layout>
       <Head>
-        <title>Shop - Lignovia Store</title>
-        <meta name="description" content="Browse our products" />
+        <title>{searchQuery ? `Search: ${searchQuery} - LIGNOVIA` : "Shop - LIGNOVIA"}</title>
+        <meta name="description" content={searchQuery ? `Search results for ${searchQuery}` : "Browse our handcrafted products"} />
       </Head>
       <div>
-        <h1 className="text-3xl font-bold mb-8">Shop</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-heading-2">
+            {searchQuery ? `Search: "${searchQuery}"` : "Shop"}
+          </h1>
+          {searchQuery && (
+            <button
+              onClick={() => {
+                router.push("/shop");
+                setSearchQuery("");
+              }}
+              className="px-4 py-2 text-body-sm hover:text-accent hover:bg-hover-light dark:hover:bg-hover-dark rounded-[10px] transition-colors duration-200"
+            >
+              Clear Search
+            </button>
+          )}
+        </div>
 
         {error ? (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <p>Error loading products: {error}</p>
+          <div className="bg-error-light/10 dark:bg-error-dark/10 border border-error-light/30 dark:border-error-dark/30 text-error-light dark:text-error-dark px-6 py-4 rounded-[14px] mb-6">
+            <p className="font-medium">Error loading products: {error}</p>
           </div>
-        ) : products && products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
-            {products.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
-          </div>
+        ) : filteredProducts && filteredProducts.length > 0 ? (
+          <>
+            {searchQuery && (
+              <p className="text-body-sm mb-6">
+                Found {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"} matching "{searchQuery}"
+              </p>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product._id || product.id} product={product} />
+              ))}
+            </div>
+          </>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-600 text-lg">No products available at the moment.</p>
-            <p className="text-gray-500 mt-2">Please check back later.</p>
+          <div className="bg-surface-light dark:bg-surface-dark rounded-[14px] border border-border-light dark:border-border-dark p-12 md:p-16 text-center">
+            <div className="mb-4 flex justify-center">
+              <svg
+                className="w-16 h-16 text-text-secondary-light dark:text-text-secondary-dark opacity-50"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+            </div>
+            <p className="text-body-lg mb-2">
+              {searchQuery ? `No products found for "${searchQuery}"` : "No products available at the moment."}
+            </p>
+            <p className="text-body-sm">
+              {searchQuery ? "Try searching for something else." : "Please check back later."}
+            </p>
           </div>
         )}
       </div>
@@ -40,6 +114,9 @@ export async function getServerSideProps(context) {
     const host = context.req.headers.host;
     const baseUrl = `${protocol}://${host}`;
 
+    // Get search query from URL
+    const searchQuery = context.query.search || "";
+
     // Fetch products from the API route
     const response = await fetch(`${baseUrl}/api/products`);
     const data = await response.json();
@@ -49,20 +126,23 @@ export async function getServerSideProps(context) {
         props: {
           products: [],
           error: data.error || "Failed to fetch products",
+          searchQuery: searchQuery,
         },
       };
     }
 
-    // Filter products to only show those with inStock: true
-    const allProducts = data.data || [];
-    const inStockProducts = allProducts.filter(
-      (product) => product.inStock === true
-    );
+    // Products are already filtered by API (published, public, inStock)
+    // Just ensure image field exists for ProductCard
+    const allProducts = (data.data || []).map((product) => ({
+      ...product,
+      image: product.image || product.mainImage || (product.images && product.images[0]) || "",
+    }));
 
     return {
       props: {
-        products: inStockProducts,
+        products: allProducts,
         error: null,
+        searchQuery: searchQuery,
       },
     };
   } catch (error) {
@@ -71,6 +151,7 @@ export async function getServerSideProps(context) {
       props: {
         products: [],
         error: error.message || "An error occurred while fetching products",
+        searchQuery: context.query.search || "",
       },
     };
   }

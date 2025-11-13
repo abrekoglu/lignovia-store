@@ -14,10 +14,10 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <div className="text-center py-12 lg:py-20">
-          <h1 className="text-4xl lg:text-5xl font-semibold text-text-primary-light dark:text-text-primary-dark mb-6 tracking-tight">
+          <h1 className="text-heading-1 mb-6">
             Craftsmanship, Precision, Serenity
           </h1>
-          <p className="text-lg lg:text-xl text-text-secondary-light dark:text-text-secondary-dark mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-body-lg text-text-secondary-light dark:text-text-secondary-dark mb-8 max-w-2xl mx-auto">
             Welcome to LIGNOVIA — a modern woodcraft studio bringing you quality products with elegant design.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
