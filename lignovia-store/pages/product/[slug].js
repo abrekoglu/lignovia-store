@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import ProductCard from "@/components/ProductCard";
+import SkeletonProductCard from "@/components/SkeletonProductCard";
 import useCartStore from "@/store/cartStore";
 import CartToast from "@/components/CartToast";
 
@@ -20,6 +21,9 @@ export default function ProductDetail({ product: initialProduct, error }) {
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [imageZoomed, setImageZoomed] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState(initialProduct?.relatedProducts || []);
+  const [relatedProductsLoading, setRelatedProductsLoading] = useState(false);
+  const [relatedProductsError, setRelatedProductsError] = useState(null);
 
   // Fetch product if not provided via SSR
   useEffect(() => {
@@ -32,6 +36,10 @@ export default function ProductDetail({ product: initialProduct, error }) {
 
           if (result.success) {
             setProduct(result.data);
+            // Fetch related products separately for better control
+            if (result.data._id || result.data.id) {
+              fetchRelatedProducts(result.data._id || result.data.id);
+            }
           } else {
             router.push("/404");
           }
@@ -46,6 +54,39 @@ export default function ProductDetail({ product: initialProduct, error }) {
       fetchProduct();
     }
   }, [slug, initialProduct, router]);
+
+  // Fetch related products when product ID is available
+  const fetchRelatedProducts = async (productId) => {
+    if (!productId) return;
+
+    try {
+      setRelatedProductsLoading(true);
+      setRelatedProductsError(null);
+
+      const response = await fetch(`/api/products/related/${productId}?limit=8`);
+      const result = await response.json();
+
+      if (result.success && result.data.products) {
+        setRelatedProducts(result.data.products);
+      } else {
+        setRelatedProducts([]);
+      }
+    } catch (error) {
+      console.error("Error fetching related products:", error);
+      setRelatedProductsError("Failed to load related products");
+      setRelatedProducts([]);
+    } finally {
+      setRelatedProductsLoading(false);
+    }
+  };
+
+  // Fetch related products on mount if product is available
+  useEffect(() => {
+    if (product?._id || product?.id) {
+      const productId = product._id || product.id;
+      fetchRelatedProducts(productId);
+    }
+  }, [product?._id, product?.id]);
 
   // Get current cart quantity
   const productId = product?._id || product?.id;
@@ -200,7 +241,7 @@ export default function ProductDetail({ product: initialProduct, error }) {
               <li>/</li>
               <li>
                 <Link
-                  href={`/shop?category=${product.categoryInfo._id}`}
+                  href={`/category/${product.categoryInfo.slug || product.categoryInfo._id}`}
                   className="hover:text-accent transition-colors duration-200"
                 >
                   {product.categoryInfo.name}
@@ -279,7 +320,7 @@ export default function ProductDetail({ product: initialProduct, error }) {
             </h1>
             {product.categoryInfo && (
               <Link
-                href={`/shop?category=${product.categoryInfo._id}`}
+                href={`/category/${product.categoryInfo.slug || product.categoryInfo._id}`}
                 className="inline-block text-sm text-accent hover:text-accent/80 transition-colors duration-200"
               >
                 {product.categoryInfo.name}
@@ -487,16 +528,31 @@ export default function ProductDetail({ product: initialProduct, error }) {
       )}
 
       {/* Related Products */}
-      {product.relatedProducts && product.relatedProducts.length > 0 && (
-        <div>
+      {(relatedProducts.length > 0 || relatedProductsLoading) && (
+        <div className="mb-16">
           <h2 className="text-2xl font-semibold mb-8 text-text-primary-light dark:text-text-primary-dark">
             Related Products
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {product.relatedProducts.map((relatedProduct) => (
-              <ProductCard key={relatedProduct._id || relatedProduct.id} product={relatedProduct} />
-            ))}
-          </div>
+          
+          {relatedProductsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <SkeletonProductCard key={i} count={1} />
+              ))}
+            </div>
+          ) : relatedProductsError ? (
+            <div className="text-center py-8">
+              <p className="text-text-secondary-light dark:text-text-secondary-dark">
+                {relatedProductsError}
+              </p>
+            </div>
+          ) : relatedProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard key={relatedProduct._id || relatedProduct.id} product={relatedProduct} />
+              ))}
+            </div>
+          ) : null}
         </div>
       )}
 
@@ -529,7 +585,10 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-        product: data.data,
+        product: {
+          ...data.data,
+          relatedProducts: [], // Will be fetched client-side via dedicated API
+        },
         error: null,
       },
     };

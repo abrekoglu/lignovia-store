@@ -31,26 +31,17 @@ export default async function handler(req, res) {
     let categoryInfo = null;
     if (product.category) {
       try {
-        categoryInfo = await Category.findById(product.category).lean();
+        categoryInfo = await Category.findOne({
+          $or: [{ _id: product.category }, { slug: product.category }],
+        }).lean();
       } catch (error) {
         console.error("Error fetching category:", error);
       }
     }
 
-    // Get related products (same category, exclude current product)
-    let relatedProducts = [];
-    if (product.category) {
-      relatedProducts = await Product.find({
-        category: product.category,
-        _id: { $ne: product._id },
-        inStock: true,
-        status: "published",
-        visibility: "public",
-      })
-        .select("name slug price mainImage image shortDescription stock")
-        .limit(4)
-        .lean();
-    }
+    // Related products will be fetched via dedicated API endpoint
+    // Return empty array here - frontend will fetch separately
+    const relatedProducts = [];
 
     // Build image gallery (mainImage + images array)
     const imageGallery = [];

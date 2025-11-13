@@ -9,6 +9,7 @@ export default function ProductCard({ product, onAddToCart }) {
   const cart = useCartStore((state) => state.items);
   const [showMaxStockWarning, setShowMaxStockWarning] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   const stock = product?.stock !== undefined ? product.stock : 0;
   
@@ -78,18 +79,52 @@ export default function ProductCard({ product, onAddToCart }) {
     }
   };
 
+  // Ensure slug exists for navigation - log warning if missing
+  if (!product?.slug) {
+    console.warn("Product missing slug:", {
+      id: product?._id || product?.id,
+      name: product?.name,
+      product: product
+    });
+  }
+  
+  // Use slug first, fallback to ID if absolutely necessary (though slug should always exist)
+  const productSlug = product?.slug || String(product?._id || product?.id || "product-not-found");
+  const productHref = `/product/${productSlug}`;
+
   return (
-    <div className="card-hover overflow-hidden p-0 flex flex-col h-full">
+    <div className="card-hover overflow-hidden p-0 flex flex-col h-full relative">
       {/* Image Area - Fixed Height */}
-      <Link href={`/product/${product?.slug || "product-slug"}`}>
-        <div className="relative h-48 bg-surface-light dark:bg-surface-dark flex-shrink-0">
+      <Link 
+        href={productHref}
+        className="block relative z-0"
+      >
+        <div
+          className="relative h-48 bg-surface-light dark:bg-surface-dark flex-shrink-0 overflow-hidden group cursor-pointer"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
           {product?.image ? (
-            <Image
-              src={product.image}
-              alt={product.name || "Product"}
-              fill
-              className="object-cover"
-            />
+            <>
+              <Image
+                src={product.image}
+                alt={product.name || "Product"}
+                fill
+                className={`object-cover transition-opacity duration-300 ${
+                  hovered && product?.hoverImage ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              {product?.hoverImage && (
+                <Image
+                  src={product.hoverImage}
+                  alt={`${product.name || "Product"} - View 2`}
+                  fill
+                  className={`object-cover transition-opacity duration-300 ${
+                    hovered ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              )}
+            </>
           ) : (
             <div className="flex items-center justify-center h-full text-text-secondary-light dark:text-text-secondary-dark">
               No Image
@@ -102,12 +137,15 @@ export default function ProductCard({ product, onAddToCart }) {
       <div className="flex flex-col flex-1 p-5 min-h-0">
         {/* Title + Description Area - Flexible */}
         <div className="flex-1 mb-5 min-h-0">
-          <Link href={`/product/${product?.slug || "product-slug"}`}>
-            <h3 className="text-lg font-semibold mb-2 text-text-primary-light dark:text-text-primary-dark line-clamp-2">
+          <Link 
+            href={productHref}
+            className="block group relative"
+          >
+            <h3 className="text-lg font-semibold mb-2 text-text-primary-light dark:text-text-primary-dark line-clamp-2 group-hover:text-accent transition-colors duration-200">
               {product?.name || "Product Name"}
             </h3>
             <p className="text-text-secondary-light dark:text-text-secondary-dark text-sm leading-relaxed line-clamp-2">
-              {product?.description || "Product description"}
+              {product?.shortDescription || product?.description || "Product description"}
             </p>
           </Link>
         </div>
@@ -154,7 +192,7 @@ export default function ProductCard({ product, onAddToCart }) {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock || isMaxAdded}
-            className={`w-full py-2.5 px-4 rounded-soft transition-all duration-smooth font-semibold flex-shrink-0 ${
+            className={`w-full py-2.5 px-4 rounded-soft transition-all duration-smooth font-semibold flex-shrink-0 relative z-10 ${
               isOutOfStock || isMaxAdded
                 ? "bg-border-light dark:bg-border-dark text-text-secondary-light dark:text-text-secondary-dark cursor-not-allowed"
                 : "btn-primary"
